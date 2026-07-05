@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE 613 — Computer Networks | Complete Topic List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --bg-card-hover: #222845;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-orange: #f97316;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
+            --gradient-1: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-2: linear-gradient(135deg, #06b6d4, #3b82f6);
+            --gradient-3: linear-gradient(135deg, #10b981, #06b6d4);
+            --gradient-4: linear-gradient(135deg, #f59e0b, #f97316);
+            --gradient-5: linear-gradient(135deg, #f43f5e, #8b5cf6);
+            --gradient-6: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 600px 400px at 20% 10%, rgba(59, 130, 246, 0.08), transparent),
+                radial-gradient(ellipse 500px 500px at 80% 50%, rgba(139, 92, 246, 0.06), transparent),
+                radial-gradient(ellipse 400px 300px at 50% 90%, rgba(6, 182, 212, 0.05), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 1.2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .meta-item .icon {
+            font-size: 1rem;
+        }
+
+        .meta-item strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .freq-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.15rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .freq-very-high {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        .freq-high {
+            background: rgba(249, 115, 22, 0.15);
+            color: #fb923c;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+        }
+
+        .freq-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .freq-low {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .freq-syllabus {
+            background: rgba(59, 130, 246, 0.12);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Chapter Sections */
+        .chapter {
+            margin-bottom: 2.5rem;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: var(--bg-secondary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chapter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .chapter-header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: default;
+            position: relative;
+        }
+
+        .chapter-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 2rem;
+            right: 2rem;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .chapter-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .ch-1 .chapter-number { background: var(--gradient-1); }
+        .ch-2 .chapter-number { background: var(--gradient-2); }
+        .ch-3 .chapter-number { background: var(--gradient-3); }
+        .ch-4 .chapter-number { background: var(--gradient-4); }
+        .ch-5 .chapter-number { background: var(--gradient-5); }
+        .ch-6 .chapter-number { background: var(--gradient-6); }
+
+        .chapter-title-group {
+            flex: 1;
+        }
+
+        .chapter-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .chapter-hours {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .chapter-topic-count {
+            padding: 0.3rem 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Topic List */
+        .topic-list {
+            list-style: none;
+            padding: 0.5rem 0;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.85rem 2rem;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .topic-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .topic-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 36px;
+            padding-top: 2px;
+            text-align: right;
+        }
+
+        .topic-content {
+            flex: 1;
+        }
+
+        .topic-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .topic-detail {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+            line-height: 1.5;
+        }
+
+        .topic-badges {
+            display: flex;
+            gap: 0.4rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            min-width: 100px;
+            padding-top: 2px;
+        }
+
+        .year-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Summary Stats */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            padding: 1.2rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Instructions */
+        .instructions {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .instructions h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .instructions code {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-cyan);
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            .header {
+                padding: 2rem 1.2rem;
+            }
+            .chapter-header {
+                padding: 1.2rem 1.2rem;
+            }
+            .topic-item {
+                padding: 0.75rem 1.2rem;
+                flex-wrap: wrap;
+            }
+            .topic-badges {
+                min-width: auto;
+                justify-content: flex-start;
+                padding-left: 46px;
+            }
+            .header-meta {
+                gap: 1rem;
+            }
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-badge">📡 6th Semester — University of Chittagong</div>
+            <h1>CSE 613 — Computer Networks</h1>
+            <p class="subtitle">Complete Topic List for Semester Final Preparation — Analyzed from Syllabus &amp; Previous Year Questions (2017–2023)</p>
+            <div class="header-meta">
+                <div class="meta-item"><span class="icon">📘</span> <strong>Kurose &amp; Ross</strong> — Top Down Approach</div>
+                <div class="meta-item"><span class="icon">🕐</span> <strong>3 Credit Hours</strong></div>
+                <div class="meta-item"><span class="icon">📝</span> <strong>72%</strong> Final Exam Weightage</div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Chapters</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">52</div>
+                <div class="stat-label">Total Topics</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Years Analyzed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">72%</div>
+                <div class="stat-label">Final Exam Weight</div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <span class="freq-badge freq-very-high">★★★★</span> Asked 4+ years
+            </div>
+            <div class="legend-item">
+                <span class="freq-badge freq-high">★★★</span> Asked 3 years
+            </div>
+            <div class="legend-item">
+                <span class="freq-badge freq-medium">★★</span> Asked 2 years
+            </div>
+            <div class="legend-item">
+                <span class="freq-badge freq-low">★</span> Asked 1 year
+            </div>
+            <div class="legend-item">
+                <span class="freq-badge freq-syllabus">SYL</span> Syllabus only
+            </div>
+        </div>
+
+        <!-- ===== CHAPTER 1 ===== -->
+        <div class="chapter ch-1">
+            <div class="chapter-header">
+                <div class="chapter-number">1</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Computer Networks &amp; the Internet</div>
+                    <div class="chapter-hours">Syllabus Allocation: 3 Hours</div>
+                </div>
+                <div class="chapter-topic-count">8 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">1.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Internet Overview, Network Edge &amp; Access Technologies</div>
+                        <div class="topic-detail">DSL, Cable, FTTH, Ethernet, WiFi, 3G/4G/5G — Home, Enterprise &amp; Wide-Area Wireless access classification</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Circuit Switching vs. Packet Switching</div>
+                        <div class="topic-detail">FDM, TDM, store-and-forward, cut-through switching, advantages/disadvantages of each</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">19</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.3</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Delay, Loss &amp; Throughput in Packet-Switched Networks</div>
+                        <div class="topic-detail">Processing, queuing, transmission, propagation delays; end-to-end delay calculations; throughput &amp; bottleneck links</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.4</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Protocol Layers — OSI Model &amp; TCP/IP Model</div>
+                        <div class="topic-detail">7-layer OSI vs. 5-layer Internet protocol stack; responsibilities of each layer; encapsulation</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.5</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Network Architecture vs. Application Architecture</div>
+                        <div class="topic-detail">Distinction between the fixed layered architecture of the network and the design of applications</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.6</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Internet Service Model — Best-Effort, Connection-Oriented &amp; Connectionless</div>
+                        <div class="topic-detail">Reliable transport in TCP; datagram service; Internet guarantees &amp; limitations</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.7</span>
+                    <div class="topic-content">
+                        <div class="topic-name">ISP Hierarchy, Peering &amp; IXPs</div>
+                        <div class="topic-detail">Tier-1 / Tier-2 ISPs, peering agreements, Internet Exchange Points, content provider networks (e.g., Google)</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">1.8</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Transmission Media &amp; Physical Layer Basics</div>
+                        <div class="topic-detail">Guided media (twisted pair, coax, fiber), unguided media (radio, microwave, satellite), electromagnetic spectrum</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">17</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== CHAPTER 2 ===== -->
+        <div class="chapter ch-2">
+            <div class="chapter-header">
+                <div class="chapter-number">2</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Application Layer</div>
+                    <div class="chapter-hours">Syllabus Allocation: 8 Hours — Web, FTP, Email, DNS, P2P</div>
+                </div>
+                <div class="chapter-topic-count">10 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">2.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">HTTP Protocol — Persistent, Non-Persistent, Pipelining &amp; HTTP/2</div>
+                        <div class="topic-detail">HTTP request/response messages, header fields, persistent vs. non-persistent connections, pipelining, HOL blocking, HTTP/2 features</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Web Caching (Proxy Servers)</div>
+                        <div class="topic-detail">How proxy servers reduce delay; conditional GET; cache hit vs. miss</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.3</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Cookies &amp; State Management</div>
+                        <div class="topic-detail">Cookie components, how websites track users, e-commerce purchase records using cookies</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.4</span>
+                    <div class="topic-content">
+                        <div class="topic-name">FTP — File Transfer Protocol</div>
+                        <div class="topic-detail">Separate control &amp; data connections, "out-of-band" control, active vs. passive mode</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.5</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Electronic Mail — SMTP, POP3, IMAP</div>
+                        <div class="topic-detail">Mail system architecture, SMTP push protocol, POP3 download-and-delete vs. download-and-keep, IMAP, message journey from sender to receiver</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.6</span>
+                    <div class="topic-content">
+                        <div class="topic-name">DNS — Domain Name System</div>
+                        <div class="topic-detail">Hierarchical name resolution, iterative vs. recursive queries, DNS records (A, AAAA, CNAME, MX, NS), DNS messages, RTT-based delay calculation with DNS lookup</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.7</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Peer-to-Peer (P2P) Applications &amp; BitTorrent</div>
+                        <div class="topic-detail">P2P vs. client-server, BitTorrent chunk exchange, tit-for-tat, optimistic unchoking, overlay networks, new peer bootstrapping</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.8</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Client-Server vs. P2P Architecture</div>
+                        <div class="topic-detail">Comparison, scalability differences, examples of each architecture</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">19</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.9</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Application Requirements — Loss Tolerance, Bandwidth, Latency</div>
+                        <div class="topic-detail">Loss-tolerant apps, bandwidth-sensitive apps, elastic apps, real-time apps; why HTTP/SMTP/POP3 use TCP not UDP</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">2.10</span>
+                    <div class="topic-content">
+                        <div class="topic-name">HTTP Message Analysis (Wireshark Captures)</div>
+                        <div class="topic-detail">Interpreting HTTP request/response from raw captured data; extracting URL, version, status codes, content-length, connection type</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-low">★</span>
+                        <span class="year-tag">17</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== CHAPTER 3 ===== -->
+        <div class="chapter ch-3">
+            <div class="chapter-header">
+                <div class="chapter-number">3</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Transport Layer</div>
+                    <div class="chapter-hours">Syllabus Allocation: 9 Hours — UDP, TCP, Congestion Control</div>
+                </div>
+                <div class="chapter-topic-count">11 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">3.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Multiplexing &amp; Demultiplexing (Ports &amp; Sockets)</div>
+                        <div class="topic-detail">UDP socket identification (2-tuple), TCP socket identification (4-tuple), port numbers, how segments reach correct process</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">UDP — User Datagram Protocol</div>
+                        <div class="topic-detail">UDP segment structure, checksum computation &amp; verification, connectionless service, why choose UDP over TCP</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.3</span>
+                    <div class="topic-content">
+                        <div class="topic-name">TCP vs. UDP — Comparison</div>
+                        <div class="topic-detail">Connection-oriented vs. connectionless, reliability, ordering, flow control, overhead comparison</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.4</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Reliable Data Transfer Principles — rdt Protocols &amp; FSMs</div>
+                        <div class="topic-detail">rdt 1.0 / 2.0 / 2.1 / 2.2 / 3.0 (stop-and-wait); FSMs for sender &amp; receiver; handling bit errors, packet loss, duplicate detection; ACK, NAK, sequence numbers, timers</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.5</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Go-Back-N (GBN) Protocol</div>
+                        <div class="topic-detail">Sliding window, cumulative ACKs, timer mechanism, behavior on packet loss, advantages &amp; disadvantages</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.6</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Selective Repeat (SR) Protocol</div>
+                        <div class="topic-detail">Individual ACKs, per-packet timers, receiver buffering, comparison with GBN</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.7</span>
+                    <div class="topic-content">
+                        <div class="topic-name">TCP — Segment Structure, Sequence Numbers &amp; ACKs</div>
+                        <div class="topic-detail">TCP header fields, sequence/acknowledgment numbers, piggybacking, rwnd field, MSS, maximum file size with 4-byte seq field</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">18</span><span class="year-tag">17</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.8</span>
+                    <div class="topic-content">
+                        <div class="topic-name">TCP Round-Trip Time Estimation &amp; Timeout</div>
+                        <div class="topic-detail">SampleRTT, EstimatedRTT (EWMA), DevRTT, TimeoutInterval computation; numerical problems</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-low">★</span>
+                        <span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.9</span>
+                    <div class="topic-content">
+                        <div class="topic-name">TCP Flow Control</div>
+                        <div class="topic-detail">Receive window (rwnd), preventing receiver buffer overflow, flow control vs. congestion control</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.10</span>
+                    <div class="topic-content">
+                        <div class="topic-name">TCP Congestion Control — Slow Start, AIMD, Fast Recovery</div>
+                        <div class="topic-detail">Three major components: slow start, congestion avoidance (AIMD), fast retransmit/recovery; ssthresh; TCP Reno vs. Tahoe; fairness</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">3.11</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Congestion Control Principles — End-to-End vs. Network-Assisted</div>
+                        <div class="topic-detail">General approaches to congestion control; implicit vs. explicit feedback; flow control vs. congestion control</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== CHAPTER 4 ===== -->
+        <div class="chapter ch-4">
+            <div class="chapter-header">
+                <div class="chapter-number">4</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Network Layer — Data Plane &amp; Control Plane</div>
+                    <div class="chapter-hours">Syllabus Allocation: 9 Hours — IP, Routing Algorithms</div>
+                </div>
+                <div class="chapter-topic-count">13 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">4.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Forwarding vs. Routing — Data Plane &amp; Control Plane</div>
+                        <div class="topic-detail">Forwarding tables, longest prefix matching, per-router control vs. logically centralized (SDN) control, generalized forwarding vs. destination-based</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Router Architecture — Input/Output Ports, Switching Fabric</div>
+                        <div class="topic-detail">Input port processing, HOL blocking at input ports, packet scheduling (FIFO, Priority, RR, WFQ), packet loss at input/output ports</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">22</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.3</span>
+                    <div class="topic-content">
+                        <div class="topic-name">IPv4 — Datagram Format, Fragmentation &amp; Addressing</div>
+                        <div class="topic-detail">IPv4 header fields, TTL, datagram fragmentation &amp; reassembly, "best-effort" service model</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.4</span>
+                    <div class="topic-content">
+                        <div class="topic-name">IP Addressing &amp; Subnetting</div>
+                        <div class="topic-detail">Classful &amp; CIDR addressing, subnet masks, subnet design problems (allocating to required host counts), prefix matching, IP address ranges</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">17</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.5</span>
+                    <div class="topic-content">
+                        <div class="topic-name">DHCP — Dynamic Host Configuration Protocol</div>
+                        <div class="topic-detail">DHCP Discover → Offer → Request → ACK; how IP addresses are dynamically assigned; DHCP server operation</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.6</span>
+                    <div class="topic-content">
+                        <div class="topic-name">NAT — Network Address Translation</div>
+                        <div class="topic-detail">NAT operation, NAT translation table, arguments for &amp; against NAT, UPnP, wireless router with NAT scenario</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.7</span>
+                    <div class="topic-content">
+                        <div class="topic-name">IPv6 — Motivation, Header Format &amp; Transition from IPv4</div>
+                        <div class="topic-detail">IPv6 header fields, comparison with IPv4, removed fields, tunneling for transition, address space sizes</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.8</span>
+                    <div class="topic-content">
+                        <div class="topic-name">ICMP — Internet Control Message Protocol</div>
+                        <div class="topic-detail">ICMP message types, Traceroute &amp; Ping, error reporting; also BOOTP, RARP</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">19</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.9</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Routing Algorithms — Link State (Dijkstra's Algorithm)</div>
+                        <div class="topic-detail">Dijkstra's algorithm step-by-step computation; shortest path from a given node to all others; numerical problems</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.10</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Routing Algorithms — Distance Vector (Bellman-Ford)</div>
+                        <div class="topic-detail">Bellman-Ford equation, DV algorithm, count-to-infinity problem, poisoned reverse; comparison with link state</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.11</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Intra-AS Routing — OSPF &amp; RIP</div>
+                        <div class="topic-detail">OSPF features (areas, link-state advertisements, hierarchical OSPF), RIP (DV-based), comparison of OSPF &amp; RIP</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.12</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Inter-AS Routing — BGP &amp; Route Aggregation</div>
+                        <div class="topic-detail">BGP path attributes, eBGP/iBGP, route selection, why intra-AS and inter-AS protocols differ, route aggregation</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">22</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">4.13</span>
+                    <div class="topic-content">
+                        <div class="topic-name">SDN &amp; OpenFlow — Generalized Forwarding</div>
+                        <div class="topic-detail">SDN architecture, OpenFlow match+action, flow table entries, logically centralized control, SDN controller</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">20</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== CHAPTER 5 ===== -->
+        <div class="chapter ch-5">
+            <div class="chapter-header">
+                <div class="chapter-number">5</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Link Layer &amp; Local Area Networks</div>
+                    <div class="chapter-hours">Syllabus Allocation: 7 Hours — Errors, Multiple Access, Addressing, Switching</div>
+                </div>
+                <div class="chapter-topic-count">7 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">5.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Link Layer Services &amp; Error Detection/Correction</div>
+                        <div class="topic-detail">Framing, error detection (parity bits, 2D parity, Internet checksum, CRC), error correction, link layer services to network layer</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">5.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Multiple Access Protocols</div>
+                        <div class="topic-detail">Channel partitioning (TDMA, FDMA), random access (ALOHA, slotted ALOHA, CSMA, CSMA/CD, CSMA/CA), taking-turns (polling, token passing); efficiency calculations</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">5.3</span>
+                    <div class="topic-content">
+                        <div class="topic-name">MAC Addressing &amp; ARP</div>
+                        <div class="topic-detail">MAC address structure (48-bit), ARP protocol operation, ARP tables, broadcast vs. unicast ARP, MAC address space size</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-very-high">★★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">5.4</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Ethernet — Frame Structure &amp; Standards</div>
+                        <div class="topic-detail">Ethernet frame format, CSMA/CD in Ethernet, 10BASE-T / 100BASE-T / Gigabit Ethernet, Ethernet as dominant LAN technology</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">19</span><span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">5.5</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Switches, VLANs &amp; Spanning Tree</div>
+                        <div class="topic-detail">Link-layer switches vs. routers, self-learning, switch tables, VLANs (trunking, port-based), store-and-forward vs. cut-through</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">19</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">5.6</span>
+                    <div class="topic-content">
+                        <div class="topic-name">CRC — Cyclic Redundancy Check (Numerical Problems)</div>
+                        <div class="topic-detail">Generator polynomial, computing CRC remainder R, appending CRC bits, verifying at receiver</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-low">★</span>
+                        <span class="year-tag">23</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">5.7</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Day in the Life of a Web Page Request</div>
+                        <div class="topic-detail">Complete walkthrough: DHCP → ARP → DNS → TCP → HTTP — integrating all layers from powering on a PC to receiving a web page</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-high">★★★</span>
+                        <span class="year-tag">20</span><span class="year-tag">19</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== CHAPTER 6 ===== -->
+        <div class="chapter ch-6">
+            <div class="chapter-header">
+                <div class="chapter-number">6</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Wireless Networks, Mobility &amp; Security</div>
+                    <div class="chapter-hours">Syllabus Allocation: 2 Hours</div>
+                </div>
+                <div class="chapter-topic-count">5 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">6.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Wireless Networks — 802.11 (WiFi) &amp; Bluetooth</div>
+                        <div class="topic-detail">802.11 architecture (BSS, AP), wireless channels, Bluetooth architecture, CDMA</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">19</span><span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">6.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Mobility — Mobile IP, Indirect &amp; Direct Routing</div>
+                        <div class="topic-detail">Home agent, foreign agent, care-of address, indirect routing, direct routing, mobile IP registration, triangle routing problem</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">18</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">6.3</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Mobile IP vs. GSM Mobility</div>
+                        <div class="topic-detail">Differences in handoff, registration, routing approaches between IP-based and cellular mobility</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-low">★</span>
+                        <span class="year-tag">18</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">6.4</span>
+                    <div class="topic-content">
+                        <div class="topic-name">Network Security Fundamentals</div>
+                        <div class="topic-detail">Message confidentiality vs. integrity, common attacks (man-in-the-middle, eavesdropping), Trudy scenario</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">6.5</span>
+                    <div class="topic-content">
+                        <div class="topic-name">RSA Encryption &amp; Decryption (Numerical Problems)</div>
+                        <div class="topic-detail">RSA key generation (choosing p, q), encryption/decryption of text, public/private key computation</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">23</span><span class="year-tag">17</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ===== BONUS: NETWORK MANAGEMENT ===== -->
+        <div class="chapter" style="border-color: rgba(139, 92, 246, 0.2);">
+            <div class="chapter-header">
+                <div class="chapter-number" style="background: linear-gradient(135deg, #6366f1, #a855f7);">+</div>
+                <div class="chapter-title-group">
+                    <div class="chapter-title">Bonus — Network Management (SNMP)</div>
+                    <div class="chapter-hours">Not in main syllabus but appeared in exams</div>
+                </div>
+                <div class="chapter-topic-count">2 Topics</div>
+            </div>
+            <ul class="topic-list">
+                <li class="topic-item">
+                    <span class="topic-number">B.1</span>
+                    <div class="topic-content">
+                        <div class="topic-name">SNMP — Simple Network Management Protocol</div>
+                        <div class="topic-detail">Managing server, managed device, network management agent, MIB; GetRequest, SetRequest, Trap messages</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-medium">★★</span>
+                        <span class="year-tag">22</span><span class="year-tag">19</span>
+                    </div>
+                </li>
+                <li class="topic-item">
+                    <span class="topic-number">B.2</span>
+                    <div class="topic-content">
+                        <div class="topic-name">IGMP — Internet Group Management Protocol</div>
+                        <div class="topic-detail">Multicast group management, use cases</div>
+                    </div>
+                    <div class="topic-badges">
+                        <span class="freq-badge freq-low">★</span>
+                        <span class="year-tag">18</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>🚀 What's Next?</h3>
+            <p>Review this topic list. When you're ready, pick any topic (e.g., <code>Topic 3.5</code> or <code>Go-Back-N Protocol</code>) and I'll create a <strong>complete, detailed preparation book</strong> in HTML format for that topic.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>CSE 613 — Computer Networks • University of Chittagong • Prepared for 6th Semester Final Exam</p>
+            <p style="margin-top: 0.3rem;">Analysis based on Course Outline + Previous Year Questions (2017–2023) • Total: 54 Topics</p>
+        </div>
+
+    </div>
+</body>
+</html>

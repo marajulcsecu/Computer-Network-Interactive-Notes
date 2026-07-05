@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.3 — Delay, Loss &amp; Throughput | CSE 613</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0f1117; --bg-card: #1c1f2e; --bg-card-alt: #1a1d2b;
+            --bg-highlight: #222640; --bg-code: #1e2235;
+            --accent-blue: #4f8ff7; --accent-cyan: #22d3ee; --accent-purple: #a78bfa;
+            --accent-emerald: #34d399; --accent-amber: #fbbf24; --accent-rose: #fb7185;
+            --accent-orange: #fb923c; --accent-teal: #2dd4bf; --accent-indigo: #818cf8;
+            --text-primary: #e8ecf4; --text-secondary: #a0aec0; --text-muted: #6b7a90; --text-heading: #f7fafc;
+            --border-subtle: rgba(255,255,255,0.06); --border-card: rgba(255,255,255,0.08);
+            --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
+            --gradient-hero: linear-gradient(135deg, #22d3ee 0%, #4f8ff7 50%, #a78bfa 100%);
+            --gradient-blue: linear-gradient(135deg, #4f8ff7, #818cf8);
+            --gradient-purple: linear-gradient(135deg, #a78bfa, #c084fc);
+            --gradient-emerald: linear-gradient(135deg, #34d399, #22d3ee);
+            --gradient-amber: linear-gradient(135deg, #fbbf24, #fb923c);
+            --gradient-rose: linear-gradient(135deg, #fb7185, #a78bfa);
+            --gradient-cyan: linear-gradient(135deg, #22d3ee, #4f8ff7);
+            --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-primary); line-height: 1.8; font-size: 16px; -webkit-font-smoothing: antialiased; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse 700px 500px at 15% 5%, rgba(34,211,238,0.06), transparent), radial-gradient(ellipse 600px 600px at 85% 40%, rgba(79,143,247,0.05), transparent), radial-gradient(ellipse 500px 400px at 50% 95%, rgba(167,139,250,0.04), transparent); pointer-events: none; z-index: 0; }
+        .page-wrapper { max-width: 920px; margin: 0 auto; padding: 1.5rem 1.5rem 5rem; position: relative; z-index: 1; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--gradient-hero); z-index: 1000; transition: width 0.1s linear; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-cyan); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(34,211,238,0.3); opacity: 0; transform: translateY(20px); transition: opacity 0.3s, transform 0.3s; z-index: 99; }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+
+        .hero { text-align: center; padding: 3.5rem 2rem 3rem; margin-bottom: 2.5rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-xl); position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gradient-hero); }
+        .hero::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 50% 120%, rgba(34,211,238,0.06), transparent 60%); pointer-events: none; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 1rem; background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); border-radius: 100px; font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.2rem; position: relative; z-index: 1; }
+        .hero h1 { font-size: 2.2rem; font-weight: 800; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.6rem; letter-spacing: -0.5px; position: relative; z-index: 1; }
+        .hero .subtitle { font-size: 1rem; color: var(--text-secondary); max-width: 650px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .toc-box { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2.5rem; }
+        .toc-box h2 { font-size: 1.15rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 1rem; }
+        .toc-list { list-style: none; columns: 2; column-gap: 2rem; }
+        .toc-list li { break-inside: avoid; margin-bottom: 0.5rem; }
+        .toc-list a { color: var(--text-secondary); text-decoration: none; font-size: 0.88rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+        .toc-list a:hover { color: var(--accent-cyan); }
+        .toc-list .toc-num { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); min-width: 28px; }
+
+        .section { margin-bottom: 3rem; }
+        .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-subtle); }
+        .section-icon { width: 46px; height: 46px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #fff; flex-shrink: 0; }
+        .section-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--text-heading); }
+        .section-header .section-sub { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+        .content-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-card); }
+        .content-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 1rem; }
+        .content-card h4 { font-size: 1.02rem; font-weight: 700; color: var(--accent-purple); margin: 1.5rem 0 0.7rem; }
+        .content-card p { margin-bottom: 0.8rem; font-size: 0.95rem; }
+        .content-card ul, .content-card ol { margin: 0.5rem 0 1rem 1.5rem; }
+        .content-card li { margin-bottom: 0.4rem; font-size: 0.93rem; }
+        .content-card li::marker { color: var(--accent-cyan); }
+
+        .definition-box { background: linear-gradient(135deg, rgba(79,143,247,0.08), rgba(129,140,248,0.05)); border-left: 4px solid var(--accent-blue); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+        .definition-box .def-label { font-size: 0.7rem; font-weight: 800; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.3rem; }
+        .definition-box p { margin-bottom: 0; }
+        .key-point { background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(249,115,22,0.05)); border-left: 4px solid var(--accent-amber); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1rem 1.5rem; margin: 1rem 0; }
+        .key-point .kp-label { font-size: 0.7rem; font-weight: 800; color: var(--accent-amber); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.3rem; }
+        .example-box { background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(34,211,238,0.05)); border-left: 4px solid var(--accent-emerald); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+        .example-box .ex-label { font-size: 0.7rem; font-weight: 800; color: var(--accent-emerald); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.3rem; }
+        .warning-box { background: linear-gradient(135deg, rgba(251,113,133,0.08), rgba(167,139,250,0.05)); border-left: 4px solid var(--accent-rose); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1rem 1.5rem; margin: 1rem 0; }
+        .warning-box .warn-label { font-size: 0.7rem; font-weight: 800; color: var(--accent-rose); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.3rem; }
+
+        .formula-box { background: linear-gradient(135deg, rgba(167,139,250,0.1), rgba(129,140,248,0.06)); border: 1px solid rgba(167,139,250,0.2); border-radius: var(--radius-md); padding: 1.5rem; margin: 1.2rem 0; text-align: center; }
+        .formula-box .formula-label { font-size: 0.7rem; font-weight: 800; color: var(--accent-purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.6rem; }
+        .formula-main { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; color: var(--accent-cyan); margin: 0.5rem 0; }
+        .formula-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: left; }
+
+        .table-wrap { overflow-x: auto; margin: 1rem 0; border-radius: var(--radius-md); border: 1px solid var(--border-card); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        thead { background: var(--bg-highlight); }
+        thead th { padding: 0.8rem 1rem; text-align: left; font-weight: 700; color: var(--accent-cyan); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border-card); }
+        tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.02); }
+        .tech-name { font-weight: 600; color: var(--accent-blue); }
+
+        .diagram-container { background: var(--bg-card-alt); border: 1px solid var(--border-card); border-radius: var(--radius-lg); padding: 2rem; margin: 1.5rem 0; text-align: center; overflow: hidden; }
+        .diagram-container .diagram-title { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.2rem; }
+        .diagram-svg { display: block; margin: 0 auto; max-width: 100%; }
+
+        .exam-card { background: var(--bg-card); border: 1px solid rgba(251,191,36,0.15); border-radius: var(--radius-lg); margin-bottom: 2rem; overflow: hidden; }
+        .exam-card-header { background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(249,115,22,0.06)); padding: 1rem 1.8rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(251,191,36,0.1); flex-wrap: wrap; }
+        .exam-year { display: inline-flex; padding: 0.25rem 0.7rem; background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.25); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--accent-amber); }
+        .exam-marks { display: inline-flex; padding: 0.2rem 0.6rem; background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.2); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; color: var(--accent-purple); }
+        .exam-question-text { font-weight: 600; color: var(--text-heading); font-size: 0.95rem; flex: 1; min-width: 200px; }
+        .exam-card-body { padding: 1.8rem; }
+        .exam-card-body h4 { color: var(--accent-emerald); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .exam-card-body h4::before { content: '✎ '; }
+        .answer-content p { margin-bottom: 0.7rem; }
+
+        .solution-step { background: var(--bg-card-alt); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 1rem 1.5rem; margin: 0.8rem 0; }
+        .step-label { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; }
+        .step-formula { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--accent-cyan); margin: 0.3rem 0; }
+
+        .delay-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.5rem 0; }
+        .delay-card { background: var(--bg-card-alt); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 1.5rem; transition: transform 0.2s; }
+        .delay-card:hover { transform: translateY(-2px); }
+        .delay-card h4 { margin-top: 0 !important; font-size: 1rem !important; }
+        .delay-card .delay-emoji { font-size: 2rem; margin-bottom: 0.6rem; display: block; }
+
+        .hl-blue { color: var(--accent-blue); font-weight: 600; }
+        .hl-purple { color: var(--accent-purple); font-weight: 600; }
+        .hl-emerald { color: var(--accent-emerald); font-weight: 600; }
+        .hl-amber { color: var(--accent-amber); font-weight: 600; }
+        .hl-rose { color: var(--accent-rose); font-weight: 600; }
+        .hl-cyan { color: var(--accent-cyan); font-weight: 600; }
+        code { font-family: 'JetBrains Mono', monospace; background: var(--bg-code); color: var(--accent-cyan); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
+        strong { color: var(--text-heading); }
+        .footer { text-align: center; padding: 2rem; margin-top: 3rem; border-top: 1px solid var(--border-subtle); font-size: 0.78rem; color: var(--text-muted); }
+
+        @keyframes dashMove { to { stroke-dashoffset: -20; } }
+        .animated-line { stroke-dasharray: 8, 6; animation: dashMove 1s linear infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .blink-dot { animation: blink 1.5s ease-in-out infinite; }
+        @keyframes packetMove { 0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
+
+        @media (max-width: 768px) { .page-wrapper { padding: 1rem; } .hero h1 { font-size: 1.5rem; } .toc-list { columns: 1; } .delay-card-grid { grid-template-columns: 1fr; } .section-header h2 { font-size: 1.2rem; } }
+        @media print { body { background: #fff; color: #222; } .back-to-top, .progress-bar { display: none; } .content-card, .exam-card { break-inside: avoid; border: 1px solid #ccc; } }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<div class="page-wrapper">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-badge">📘 Topic 1.3 — Chapter 1: Computer Networks &amp; the Internet</div>
+        <h1>Delay, Loss &amp; Throughput in<br>Packet-Switched Networks</h1>
+        <p class="subtitle">Complete exam-ready guide with all 4 delay types, formulas, throughput concepts, step-by-step numerical solutions, and all previous year questions with model answers</p>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc-box">
+        <h2>📑 Table of Contents</h2>
+        <ol class="toc-list">
+            <li><a href="#sec-overview"><span class="toc-num">1</span> Overview — Types of Delay</a></li>
+            <li><a href="#sec-nodal"><span class="toc-num">2</span> Nodal Delay (d_nodal)</a></li>
+            <li><a href="#sec-processing"><span class="toc-num">3</span> Processing Delay (d_proc)</a></li>
+            <li><a href="#sec-queuing"><span class="toc-num">4</span> Queuing Delay (d_queue)</a></li>
+            <li><a href="#sec-transmission"><span class="toc-num">5</span> Transmission Delay (d_trans)</a></li>
+            <li><a href="#sec-propagation"><span class="toc-num">6</span> Propagation Delay (d_prop)</a></li>
+            <li><a href="#sec-trans-vs-prop"><span class="toc-num">7</span> Transmission vs. Propagation</a></li>
+            <li><a href="#sec-endtoend"><span class="toc-num">8</span> End-to-End Delay</a></li>
+            <li><a href="#sec-loss"><span class="toc-num">9</span> Packet Loss</a></li>
+            <li><a href="#sec-throughput"><span class="toc-num">10</span> Throughput &amp; Bottleneck Links</a></li>
+            <li><a href="#sec-formulas"><span class="toc-num">11</span> All Formulas Summary</a></li>
+            <li><a href="#sec-numerical"><span class="toc-num">12</span> Numerical Examples</a></li>
+            <li><a href="#sec-key-summary"><span class="toc-num">13</span> Key Points for Exam</a></li>
+            <li><a href="#sec-exam"><span class="toc-num">14</span> Previous Year Questions</a></li>
+        </ol>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 1: OVERVIEW                                              -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-overview">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-cyan);">⏱️</div>
+            <div><h2>1. Overview — Types of Delay</h2><div class="section-sub">Understanding what causes delay when a packet travels through the network</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 The Journey of a Packet</h3>
+            <p>When a packet travels from a source host to a destination host through a packet-switched network (like the Internet), it passes through a series of <strong>routers</strong>. At <em>each router</em> along the path, the packet suffers several types of delay. Understanding these delays is critical because they determine the overall <strong>performance</strong> of the network.</p>
+            <p>There are <strong>four types of delay</strong> that a packet experiences at each router (node):</p>
+
+            <div class="delay-card-grid">
+                <div class="delay-card">
+                    <span class="delay-emoji">🔍</span>
+                    <h4 style="color: var(--accent-blue);">1. Processing Delay (d<sub>proc</sub>)</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">Time for router to examine the packet header and determine where to forward it.</p>
+                </div>
+                <div class="delay-card">
+                    <span class="delay-emoji">🚦</span>
+                    <h4 style="color: var(--accent-amber);">2. Queuing Delay (d<sub>queue</sub>)</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">Time the packet waits in the output buffer before being transmitted.</p>
+                </div>
+                <div class="delay-card">
+                    <span class="delay-emoji">📤</span>
+                    <h4 style="color: var(--accent-emerald);">3. Transmission Delay (d<sub>trans</sub>)</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">Time to push all the packet's bits onto the outgoing link.</p>
+                </div>
+                <div class="delay-card">
+                    <span class="delay-emoji">🌊</span>
+                    <h4 style="color: var(--accent-purple);">4. Propagation Delay (d<sub>prop</sub>)</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">Time for a bit to travel across the physical link from one end to the other.</p>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <div class="formula-label">📐 Nodal Delay (Total Delay at One Router)</div>
+                <div class="formula-main">d<sub>nodal</sub> = d<sub>proc</sub> + d<sub>queue</sub> + d<sub>trans</sub> + d<sub>prop</sub></div>
+                <div class="formula-desc">The total delay at a single node (router) is the sum of all four delay components.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 2: NODAL DELAY                                           -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-nodal">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-blue);">🔗</div>
+            <div><h2>2. Nodal Delay (d<sub>nodal</sub>)</h2><div class="section-sub">The total delay a packet experiences at a single router</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 What is Nodal Delay?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>nodal delay</strong> is the total delay that a packet accumulates at a single node (router) as it is processed, waits in a queue, is transmitted onto the outgoing link, and propagates to the next node.</p>
+            </div>
+            <p>Think of a packet arriving at a router like a traveler arriving at a highway toll plaza:</p>
+            <ul>
+                <li><strong>Processing</strong> = the toll booth operator checking your ticket (reading the destination)</li>
+                <li><strong>Queuing</strong> = waiting in line behind other cars</li>
+                <li><strong>Transmission</strong> = the time it takes for your entire car to pass through the booth gate</li>
+                <li><strong>Propagation</strong> = driving the distance from this toll plaza to the next one</li>
+            </ul>
+        </div>
+
+        <!-- Nodal Delay Diagram -->
+        <div class="diagram-container">
+            <div class="diagram-title">📊 Diagram: The Four Components of Nodal Delay at a Router</div>
+            <svg class="diagram-svg" viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg">
+                <!-- Incoming packets -->
+                <rect x="10" y="115" width="80" height="50" rx="8" fill="rgba(79,143,247,0.1)" stroke="rgba(79,143,247,0.3)" stroke-width="1.5"/>
+                <text x="50" y="138" text-anchor="middle" fill="#4f8ff7" font-size="9" font-weight="700" font-family="Inter">Incoming</text>
+                <text x="50" y="152" text-anchor="middle" fill="#4f8ff7" font-size="9" font-family="Inter">Packet</text>
+
+                <!-- Arrow to Processing -->
+                <line x1="90" y1="140" x2="140" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arrowW)"/>
+
+                <!-- Processing Box -->
+                <rect x="140" y="100" width="120" height="80" rx="12" fill="rgba(79,143,247,0.08)" stroke="rgba(79,143,247,0.3)" stroke-width="1.5"/>
+                <text x="200" y="125" text-anchor="middle" fill="#4f8ff7" font-size="10" font-weight="700" font-family="Inter">🔍 Processing</text>
+                <text x="200" y="143" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Check header,</text>
+                <text x="200" y="155" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">error check,</text>
+                <text x="200" y="167" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">lookup next hop</text>
+
+                <!-- Arrow to Queuing -->
+                <line x1="260" y1="140" x2="310" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+                <!-- Queuing Box -->
+                <rect x="310" y="100" width="120" height="80" rx="12" fill="rgba(251,191,36,0.08)" stroke="rgba(251,191,36,0.3)" stroke-width="1.5"/>
+                <text x="370" y="125" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="700" font-family="Inter">🚦 Queuing</text>
+                <text x="370" y="143" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Wait in output</text>
+                <text x="370" y="155" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">buffer for</text>
+                <text x="370" y="167" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">link to be free</text>
+
+                <!-- Arrow to Transmission -->
+                <line x1="430" y1="140" x2="480" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+                <!-- Transmission Box -->
+                <rect x="480" y="100" width="120" height="80" rx="12" fill="rgba(52,211,153,0.08)" stroke="rgba(52,211,153,0.3)" stroke-width="1.5"/>
+                <text x="540" y="125" text-anchor="middle" fill="#34d399" font-size="10" font-weight="700" font-family="Inter">📤 Transmission</text>
+                <text x="540" y="143" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Push all L bits</text>
+                <text x="540" y="155" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">onto the link</text>
+                <text x="540" y="167" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">(L/R seconds)</text>
+
+                <!-- Arrow to Propagation -->
+                <line x1="600" y1="140" x2="650" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+                <!-- Propagation -->
+                <rect x="650" y="100" width="130" height="80" rx="12" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
+                <text x="715" y="125" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="700" font-family="Inter">🌊 Propagation</text>
+                <text x="715" y="143" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Bit travels across</text>
+                <text x="715" y="155" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">physical link</text>
+                <text x="715" y="167" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">(d/s seconds)</text>
+
+                <!-- Animated packet dots -->
+                <circle r="5" fill="#22d3ee" opacity="0.8">
+                    <animateMotion dur="4s" repeatCount="indefinite" path="M50,140 L200,140 L370,140 L540,140 L715,140"/>
+                </circle>
+
+                <!-- Labels -->
+                <text x="200" y="210" text-anchor="middle" fill="#4f8ff7" font-size="9" font-weight="600" font-family="Inter">d_proc</text>
+                <text x="370" y="210" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="600" font-family="Inter">d_queue</text>
+                <text x="540" y="210" text-anchor="middle" fill="#34d399" font-size="9" font-weight="600" font-family="Inter">d_trans = L/R</text>
+                <text x="715" y="210" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="600" font-family="Inter">d_prop = d/s</text>
+
+                <!-- Bottom formula -->
+                <rect x="190" y="240" width="440" height="40" rx="12" fill="rgba(34,211,238,0.06)" stroke="rgba(34,211,238,0.2)" stroke-width="1"/>
+                <text x="410" y="265" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="700" font-family="JetBrains Mono">d_nodal = d_proc + d_queue + d_trans + d_prop</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 3: PROCESSING DELAY                                      -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-processing">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-blue);">🔍</div>
+            <div><h2>3. Processing Delay (d<sub>proc</sub>)</h2><div class="section-sub">The time a router takes to examine the packet header</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 What is Processing Delay?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>processing delay</strong> is the time required for a router to examine the packet's header, determine the output link based on the forwarding table lookup, and check for bit-level errors in the packet.</p>
+            </div>
+            <h4>What happens during processing?</h4>
+            <ul>
+                <li><strong>Header examination:</strong> The router reads the destination IP address from the packet header.</li>
+                <li><strong>Forwarding table lookup:</strong> It matches the destination IP against its forwarding table to decide which output link to send the packet on.</li>
+                <li><strong>Error checking:</strong> It may check for bit errors that might have occurred during transmission on the incoming link.</li>
+            </ul>
+            <h4>Characteristics</h4>
+            <ul>
+                <li><strong>Magnitude:</strong> Typically on the order of <strong>microseconds (μs)</strong> or less in modern high-speed routers.</li>
+                <li><strong>Type:</strong> <span class="hl-emerald">Constant</span> — generally the same for every packet at a given router (depends on router hardware speed).</li>
+                <li><strong>Often negligible</strong> in calculations compared to other delays.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 4: QUEUING DELAY                                         -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-queuing">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-amber);">🚦</div>
+            <div><h2>4. Queuing Delay (d<sub>queue</sub>)</h2><div class="section-sub">Waiting in line — the most complex and variable delay</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 What is Queuing Delay?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>queuing delay</strong> is the time a packet spends waiting in the router's <strong>output buffer (queue)</strong> before it can be transmitted onto the outgoing link. This happens when other packets are already queued for transmission on that same link.</p>
+            </div>
+            <h4>When Does Queuing Happen?</h4>
+            <p>When the router needs to send a packet out on a particular link, but that link is already busy transmitting another packet, the new packet must wait. It joins a queue (line) in the output buffer. The longer the queue, the longer the wait.</p>
+            <div class="example-box">
+                <div class="ex-label">💡 Analogy</div>
+                <p>Queuing delay is like waiting at a supermarket checkout. If you arrive and no one is ahead of you, the wait is zero. If 10 people are in line, you must wait for all of them to be served. The wait depends entirely on how busy the store is.</p>
+            </div>
+            <h4>Characteristics</h4>
+            <ul>
+                <li><strong>Magnitude:</strong> Ranges from <strong>zero</strong> (empty queue) to <strong>milliseconds</strong> (long queue) — can be very large during congestion.</li>
+                <li><strong>Type:</strong> <span class="hl-rose">Variable</span> — depends on the intensity of traffic arriving at the router. This is the most unpredictable delay component.</li>
+                <li><strong>Traffic Intensity:</strong> A key metric that determines queuing behavior is:</li>
+            </ul>
+            <div class="formula-box">
+                <div class="formula-label">📐 Traffic Intensity</div>
+                <div class="formula-main">Traffic Intensity = La / R</div>
+                <div class="formula-desc">
+                    <strong>L</strong> = average packet length (bits)<br>
+                    <strong>a</strong> = average packet arrival rate (packets/sec)<br>
+                    <strong>R</strong> = link transmission rate (bps)<br>
+                    <strong>La</strong> = average rate at which bits arrive at the queue<br>
+                    <strong>R</strong> = rate at which bits are pushed out of the queue
+                </div>
+            </div>
+            <ul>
+                <li>If <code>La/R > 1</code> → bits arrive faster than they leave → queue grows without bound → <strong>packet loss!</strong></li>
+                <li>If <code>La/R ≤ 1</code> → depends on arrival pattern. If bursty, queuing may still build up temporarily.</li>
+                <li>If <code>La/R ≈ 0</code> → almost no queuing delay.</li>
+            </ul>
+            <div class="key-point">
+                <div class="kp-label">⭐ Golden Rule</div>
+                <p>Design your system so that <strong>traffic intensity La/R &lt; 1</strong>. If traffic intensity approaches or exceeds 1, queuing delays become extremely large and packet loss is inevitable.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 5: TRANSMISSION DELAY                                    -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-transmission">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-emerald);">📤</div>
+            <div><h2>5. Transmission Delay (d<sub>trans</sub>)</h2><div class="section-sub">The time to push all bits of a packet onto the link</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 What is Transmission Delay?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>transmission delay</strong> is the amount of time required for the router to push (transmit) <strong>all the bits of the packet onto the outgoing link</strong>. It is the time from when the first bit of the packet is placed on the link until the last bit of the packet is placed on the link.</p>
+            </div>
+
+            <h4>Intuition</h4>
+            <p>Imagine you have a line of 1,000 toy soldiers (= bits) and you need to load them one-by-one onto a conveyor belt. The speed at which you can place soldiers on the belt is the <strong>transmission rate (R)</strong>. The total time to load all soldiers is the <strong>transmission delay</strong>.</p>
+            <p>The transmission delay depends on <strong>two things</strong>:</p>
+            <ol>
+                <li><strong>The size of the packet (L):</strong> More bits = more time to push them all out.</li>
+                <li><strong>The transmission rate of the link (R):</strong> A faster link pushes bits out faster.</li>
+            </ol>
+
+            <div class="formula-box">
+                <div class="formula-label">📐 Formula: Transmission Delay</div>
+                <div class="formula-main">d<sub>trans</sub> = L / R</div>
+                <div class="formula-desc">
+                    <strong>L</strong> = length of the packet (in bits)<br>
+                    <strong>R</strong> = transmission rate of the outgoing link (in bits per second, bps)<br>
+                    <strong>d<sub>trans</sub></strong> = time to transmit the packet (in seconds)
+                </div>
+            </div>
+
+            <h4>Characteristics</h4>
+            <ul>
+                <li><strong>Magnitude:</strong> Depends on packet size and link speed. For a 1,500-byte packet on a 1 Gbps Ethernet link: (1500 × 8) / (10⁹) = 12 μs. On a 56 kbps dial-up: (1500 × 8) / 56000 ≈ 214 ms.</li>
+                <li><strong>Type:</strong> <span class="hl-emerald">Constant</span> for a given packet size and link rate — does not vary with traffic.</li>
+            </ul>
+
+            <div class="warning-box">
+                <div class="warn-label">⚠️ Common Confusion</div>
+                <p>Transmission delay is NOT about how far the bit has to travel. It's about how long it takes to <em>load</em> all the bits onto the link. It depends on <em>packet size</em> and <em>link speed</em>, NOT on distance.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 6: PROPAGATION DELAY                                     -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-propagation">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-purple);">🌊</div>
+            <div><h2>6. Propagation Delay (d<sub>prop</sub>)</h2><div class="section-sub">The time for a bit to travel across the physical link</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 What is Propagation Delay?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>propagation delay</strong> is the time it takes for a single bit to travel (propagate) from <strong>one end of the link to the other end</strong>. It is the time for the electromagnetic or optical signal to physically travel the length of the wire or fiber.</p>
+            </div>
+
+            <h4>Intuition</h4>
+            <p>Once a bit is placed on the link (by the transmitter), it travels through the physical medium (copper wire, fiber optic cable, or air) at a speed close to the speed of light. The propagation delay depends on <strong>two things</strong>:</p>
+            <ol>
+                <li><strong>The distance (d):</strong> The physical length of the link. Longer link = more time.</li>
+                <li><strong>The propagation speed (s):</strong> How fast the signal travels through the medium. In copper wire, it's about 2 × 10⁸ m/s. In fiber optic, it's about 2 × 10⁸ to 3 × 10⁸ m/s.</li>
+            </ol>
+
+            <div class="formula-box">
+                <div class="formula-label">📐 Formula: Propagation Delay</div>
+                <div class="formula-main">d<sub>prop</sub> = d / s</div>
+                <div class="formula-desc">
+                    <strong>d</strong> = distance between two routers (in meters)<br>
+                    <strong>s</strong> = propagation speed of the medium (in meters per second, m/s)<br>
+                    <strong>d<sub>prop</sub></strong> = propagation delay (in seconds)<br><br>
+                    Typical propagation speeds: Copper ≈ 2.3 × 10⁸ m/s, Fiber ≈ 2 × 10⁸ m/s, Air ≈ 3 × 10⁸ m/s
+                </div>
+            </div>
+
+            <h4>Characteristics</h4>
+            <ul>
+                <li><strong>Magnitude:</strong> Depends entirely on the physical distance. For a short LAN cable (100m): negligible. For an intercontinental link (10,000 km via fiber): d_prop = 10⁷ / (2 × 10⁸) = 50 ms.</li>
+                <li><strong>Type:</strong> <span class="hl-emerald">Constant</span> — for a given physical link, the distance and speed don't change.</li>
+            </ul>
+
+            <div class="warning-box">
+                <div class="warn-label">⚠️ Common Confusion</div>
+                <p>Propagation delay depends on <em>distance</em> and <em>medium speed</em> — NOT on packet size or link transmission rate. Even if you double the link speed, the propagation delay stays the same.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 7: TRANSMISSION vs PROPAGATION                           -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-trans-vs-prop">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-rose);">⚖️</div>
+            <div><h2>7. Transmission Delay vs. Propagation Delay</h2><div class="section-sub">The most commonly confused pair — understand the difference clearly</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 Key Comparison</h3>
+            <p>This is one of the most important distinctions in networking. Many students confuse these two delays, and exams often test this distinction.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Feature</th><th>Transmission Delay (d<sub>trans</sub>)</th><th>Propagation Delay (d<sub>prop</sub>)</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>What it measures</strong></td><td>Time to push ALL bits of the packet onto the link</td><td>Time for ONE bit to travel the full length of the link</td></tr>
+                        <tr><td><strong>Formula</strong></td><td class="tech-name">d<sub>trans</sub> = L / R</td><td class="tech-name">d<sub>prop</sub> = d / s</td></tr>
+                        <tr><td><strong>Depends on</strong></td><td>Packet size (L) and link rate (R)</td><td>Link distance (d) and propagation speed (s)</td></tr>
+                        <tr><td><strong>Independent of</strong></td><td>Distance between routers</td><td>Packet size or link speed</td></tr>
+                        <tr><td><strong>Analogy</strong></td><td>Time to load all cars of a train onto a highway on-ramp</td><td>Time for the first car to drive from one city to another</td></tr>
+                        <tr><td><strong>Where it occurs</strong></td><td>At the transmitting end of the link</td><td>Across the link (in the wire/fiber/air)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="example-box">
+                <div class="ex-label">💡 Caravan Analogy (from Kurose textbook)</div>
+                <p>Imagine a caravan of 10 cars traveling from one toll booth to the next. The toll booth can process (push out) 1 car every 12 seconds.</p>
+                <ul>
+                    <li><strong>Transmission delay</strong> = time to push all 10 cars through the toll booth = 10 × 12 = 120 seconds. This depends on the <em>number of cars</em> (packet length) and the <em>booth speed</em> (link rate).</li>
+                    <li><strong>Propagation delay</strong> = time for one car to drive from this toll booth to the next one (say 100 km at 100 km/hr = 1 hour). This depends on <em>distance</em> and <em>speed</em> of the car on the highway.</li>
+                </ul>
+                <p>These are completely independent! Making the toll booth faster (higher R) doesn't make the highway shorter (lower d). Making the highway shorter doesn't make the toll booth faster.</p>
+            </div>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Memory Aid</div>
+                <p><strong>Transmission</strong> = "loading time" — depends on <em>how much data</em> (L) and <em>how fast you can push</em> (R).<br>
+                <strong>Propagation</strong> = "travel time" — depends on <em>how far</em> (d) and <em>how fast the signal moves</em> (s).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 8: END-TO-END DELAY                                      -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-endtoend">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-cyan);">🏁</div>
+            <div><h2>8. End-to-End Delay</h2><div class="section-sub">Total delay from source host to destination host</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 Calculating the Total End-to-End Delay</h3>
+            <p>The end-to-end delay is the total delay a packet experiences from the moment it leaves the source host until it arrives at the destination host. If the path goes through <strong>N links</strong> (i.e., N-1 routers), and assuming no queuing delay:</p>
+
+            <div class="formula-box">
+                <div class="formula-label">📐 End-to-End Delay (N links, homogeneous)</div>
+                <div class="formula-main">d<sub>end-to-end</sub> = N × (d<sub>proc</sub> + d<sub>trans</sub> + d<sub>prop</sub>)</div>
+                <div class="formula-desc">Assuming all N links have the same transmission rate, length, and processing delay, and queuing delay is negligible.</div>
+            </div>
+
+            <p>For the simplest case where we only consider <strong>transmission and propagation delay</strong> (ignoring processing and queuing):</p>
+
+            <div class="formula-box">
+                <div class="formula-label">📐 Simplified End-to-End Delay (One Link)</div>
+                <div class="formula-main">d<sub>end-to-end</sub> = d<sub>trans</sub> + d<sub>prop</sub> = L/R + d/s</div>
+                <div class="formula-desc">This is the expression asked in the <strong>2017 exam Q1.c.iii</strong>.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 9: PACKET LOSS                                           -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-loss">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-rose);">❌</div>
+            <div><h2>9. Packet Loss</h2><div class="section-sub">What happens when the buffer overflows</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 Why Do Packets Get Lost?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Packet loss</strong> occurs when a packet arrives at a router whose output buffer (queue) is <strong>completely full</strong>. Since there is no room to store the arriving packet, the router <strong>drops (discards)</strong> it. The packet is lost and must be retransmitted.</p>
+            </div>
+            <p>Key points about packet loss:</p>
+            <ul>
+                <li>Packet loss is a direct consequence of <strong>finite buffer size</strong> and <strong>congestion</strong>.</li>
+                <li>As traffic intensity (La/R) approaches 1, the fraction of lost packets increases.</li>
+                <li>Lost packets may be <strong>retransmitted</strong> by the sending host (e.g., TCP retransmits lost segments), or they may simply be lost (e.g., UDP does not retransmit).</li>
+                <li>Packet loss is a performance issue — it reduces effective throughput and can cause delays due to retransmissions.</li>
+            </ul>
+            <div class="key-point">
+                <div class="kp-label">⭐ Exam Point</div>
+                <p>The performance of a node is often measured by delay, loss, and throughput. Packet loss occurs because router buffers have finite capacity. When the buffer is full, arriving packets are dropped.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 10: THROUGHPUT                                           -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-throughput">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-emerald);">📊</div>
+            <div><h2>10. Throughput &amp; Bottleneck Links</h2><div class="section-sub">How fast data actually flows — a critical exam concept</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 What is Throughput?</h3>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Throughput</strong> is the rate (in bits per second) at which data is actually transferred between the sender and receiver. It is the <em>effective</em> data transfer rate as seen by the application.</p>
+            </div>
+            <p>There are two types of throughput:</p>
+            <ul>
+                <li><strong>Instantaneous throughput:</strong> The rate at a given instant in time (e.g., what your download manager shows as current speed).</li>
+                <li><strong>Average throughput:</strong> If you transfer <strong>F bits</strong> of a file in <strong>T seconds</strong>, then average throughput = <strong>F/T bps</strong>.</li>
+            </ul>
+
+            <h4>What is a Bottleneck Link?</h4>
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>When data travels through a path consisting of multiple links with different transmission rates, the <strong>bottleneck link</strong> is the link with the <strong>lowest transmission rate</strong> on the path. The end-to-end throughput is limited by this bottleneck link.</p>
+            </div>
+
+            <div class="formula-box">
+                <div class="formula-label">📐 Formula: End-to-End Throughput</div>
+                <div class="formula-main">Throughput = min{R₁, R₂, R₃, ..., R<sub>N</sub>}</div>
+                <div class="formula-desc">The throughput of a path is the <strong>minimum</strong> of the transmission rates of all links along the path. The link with the minimum rate is the <strong>bottleneck link</strong>.</div>
+            </div>
+
+            <div class="example-box">
+                <div class="ex-label">💡 Analogy — Water Pipes</div>
+                <p>Think of data flowing through a series of water pipes of different diameters. The amount of water that flows through the entire pipeline is limited by the <strong>narrowest pipe</strong> — no matter how wide the other pipes are. That narrowest pipe is the "bottleneck."</p>
+            </div>
+
+            <h4>Transfer Time</h4>
+            <p>If you know the throughput and the file size, you can calculate the transfer time:</p>
+            <div class="formula-box">
+                <div class="formula-label">📐 File Transfer Time</div>
+                <div class="formula-main">Time = F / Throughput = F / min{R₁, R₂, ..., R<sub>N</sub>}</div>
+                <div class="formula-desc"><strong>F</strong> = file size (in bits) &nbsp;|&nbsp; <strong>Throughput</strong> = bottleneck rate (in bps)</div>
+            </div>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Key Exam Concept</div>
+                <p>The end-to-end throughput is always limited by the <strong>bottleneck link</strong> — the link with the <em>smallest</em> transmission rate along the path. In today's Internet, the bottleneck is often the access network (your home DSL/Cable connection), not the core.</p>
+            </div>
+        </div>
+
+        <!-- Bottleneck Diagram -->
+        <div class="diagram-container">
+            <div class="diagram-title">📊 Diagram: Bottleneck Link Determines Throughput</div>
+            <svg class="diagram-svg" viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+                <!-- Host A -->
+                <rect x="15" y="55" width="80" height="50" rx="10" fill="rgba(79,143,247,0.1)" stroke="rgba(79,143,247,0.4)" stroke-width="1.5"/>
+                <text x="55" y="78" text-anchor="middle" fill="#4f8ff7" font-size="10" font-weight="700" font-family="Inter">Host A</text>
+                <text x="55" y="93" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Sender</text>
+
+                <!-- Link 1 (wide pipe) -->
+                <rect x="100" y="65" width="150" height="30" rx="6" fill="rgba(52,211,153,0.12)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+                <text x="175" y="84" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="Inter">R₁ = 500 kbps</text>
+
+                <!-- Link 2 (narrow pipe - BOTTLENECK) -->
+                <rect x="265" y="72" width="150" height="16" rx="4" fill="rgba(251,113,133,0.2)" stroke="rgba(251,113,133,0.5)" stroke-width="2"/>
+                <text x="340" y="83" text-anchor="middle" fill="#fb7185" font-size="9" font-weight="700" font-family="Inter">R₂ = 100 kbps</text>
+                <text x="340" y="110" text-anchor="middle" fill="#fb7185" font-size="10" font-weight="800" font-family="Inter">⬆ BOTTLENECK</text>
+
+                <!-- Link 3 (wide pipe) -->
+                <rect x="430" y="60" width="150" height="40" rx="6" fill="rgba(52,211,153,0.12)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+                <text x="505" y="84" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="Inter">R₃ = 1 Mbps</text>
+
+                <!-- Host B -->
+                <rect x="595" y="55" width="80" height="50" rx="10" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+                <text x="635" y="78" text-anchor="middle" fill="#34d399" font-size="10" font-weight="700" font-family="Inter">Host B</text>
+                <text x="635" y="93" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Receiver</text>
+
+                <!-- Result -->
+                <rect x="250" y="130" width="300" height="35" rx="10" fill="rgba(34,211,238,0.08)" stroke="rgba(34,211,238,0.2)" stroke-width="1.5"/>
+                <text x="400" y="152" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="700" font-family="JetBrains Mono">Throughput = min(500k, 100k, 1M) = 100 kbps</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 11: ALL FORMULAS                                         -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-formulas">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-purple);">📐</div>
+            <div><h2>11. All Important Formulas</h2><div class="section-sub">Complete formula sheet for this topic</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 Formula Summary Sheet</h3>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>#</th><th>Formula</th><th>Symbols</th><th>Use</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td class="tech-name">d<sub>trans</sub> = L / R</td><td>L = packet size (bits), R = link rate (bps)</td><td>Transmission delay — time to push packet onto link</td></tr>
+                        <tr><td>2</td><td class="tech-name">d<sub>prop</sub> = d / s</td><td>d = distance (m), s = propagation speed (m/s)</td><td>Propagation delay — time for bit to travel the link</td></tr>
+                        <tr><td>3</td><td class="tech-name">d<sub>nodal</sub> = d<sub>proc</sub> + d<sub>queue</sub> + d<sub>trans</sub> + d<sub>prop</sub></td><td>All four delay components</td><td>Total delay at one router (node)</td></tr>
+                        <tr><td>4</td><td class="tech-name">d<sub>e2e</sub> = d<sub>trans</sub> + d<sub>prop</sub> = L/R + d/s</td><td>For a single link, ignoring proc &amp; queue</td><td>End-to-end delay (single link)</td></tr>
+                        <tr><td>5</td><td class="tech-name">d<sub>e2e</sub> = N × (d<sub>proc</sub> + d<sub>trans</sub> + d<sub>prop</sub>)</td><td>N = number of links</td><td>End-to-end delay (N identical links, no queuing)</td></tr>
+                        <tr><td>6</td><td class="tech-name">Throughput = min{R₁, R₂, ..., R<sub>N</sub>}</td><td>R<sub>i</sub> = rate of link i</td><td>End-to-end throughput (bottleneck)</td></tr>
+                        <tr><td>7</td><td class="tech-name">Transfer Time = F / Throughput</td><td>F = file size (bits)</td><td>Time to transfer entire file</td></tr>
+                        <tr><td>8</td><td class="tech-name">Traffic Intensity = La / R</td><td>L = packet size, a = arrival rate, R = link rate</td><td>If ≥ 1, queue grows unbounded</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 12: NUMERICAL EXAMPLES                                   -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-numerical">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-amber);">🔢</div>
+            <div><h2>12. Numerical Examples (Step-by-Step)</h2><div class="section-sub">Practice solving problems with complete working</div></div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Example 1: Propagation &amp; Transmission Delay</h3>
+            <p><strong>Problem:</strong> Two hosts A and B are connected by a single link of rate R = 10 Mbps. They are separated by m = 5,000 km. Propagation speed is s = 2.5 × 10⁸ m/s. Host A sends a packet of L = 1,500 bytes. Find d<sub>prop</sub>, d<sub>trans</sub>, and the end-to-end delay.</p>
+
+            <div class="solution-step">
+                <div class="step-label">Step 1: Convert units</div>
+                <p>m = 5,000 km = 5 × 10⁶ m<br>L = 1,500 bytes = 1,500 × 8 = 12,000 bits<br>R = 10 Mbps = 10 × 10⁶ bps</p>
+            </div>
+            <div class="solution-step">
+                <div class="step-label">Step 2: Propagation Delay</div>
+                <div class="step-formula">d<sub>prop</sub> = d / s = (5 × 10⁶) / (2.5 × 10⁸) = 0.02 s = <strong style="color: var(--accent-amber);">20 ms</strong></div>
+            </div>
+            <div class="solution-step">
+                <div class="step-label">Step 3: Transmission Delay</div>
+                <div class="step-formula">d<sub>trans</sub> = L / R = 12,000 / (10 × 10⁶) = 0.0012 s = <strong style="color: var(--accent-amber);">1.2 ms</strong></div>
+            </div>
+            <div class="solution-step">
+                <div class="step-label">Step 4: End-to-End Delay (ignoring processing &amp; queuing)</div>
+                <div class="step-formula">d<sub>e2e</sub> = d<sub>trans</sub> + d<sub>prop</sub> = 1.2 ms + 20 ms = <strong style="color: var(--accent-amber);">21.2 ms</strong></div>
+            </div>
+            <div class="key-point">
+                <div class="kp-label">💡 Observation</div>
+                <p>In this case, propagation delay (20 ms) is much larger than transmission delay (1.2 ms). This is typical for long-distance links with high transmission rates — the distance dominates.</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Example 2: Throughput &amp; Transfer Time</h3>
+            <p><strong>Problem:</strong> Host A sends a 4 million byte file to Host B. The path has three links: R₁ = 500 kbps, R₂ = 2 Mbps, R₃ = 1 Mbps. (a) What is the throughput? (b) How long to transfer the file?</p>
+
+            <div class="solution-step">
+                <div class="step-label">Step 1: Find the bottleneck (throughput)</div>
+                <div class="step-formula">Throughput = min{R₁, R₂, R₃} = min{500 kbps, 2 Mbps, 1 Mbps} = <strong style="color: var(--accent-amber);">500 kbps</strong></div>
+                <p>The bottleneck link is R₁ = 500 kbps (the slowest link).</p>
+            </div>
+            <div class="solution-step">
+                <div class="step-label">Step 2: Convert file size to bits</div>
+                <div class="step-formula">F = 4 million bytes = 4 × 10⁶ × 8 = 32 × 10⁶ bits = 32 Mbits</div>
+            </div>
+            <div class="solution-step">
+                <div class="step-label">Step 3: Transfer time</div>
+                <div class="step-formula">Time = F / Throughput = (32 × 10⁶) / (500 × 10³) = 64 seconds</div>
+                <p>It takes approximately <strong style="color: var(--accent-amber);">64 seconds</strong> to transfer the file.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 13: KEY POINTS                                           -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-key-summary">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-rose);">🎯</div>
+            <div><h2>13. Key Points Summary for Exam</h2><div class="section-sub">Quick-revision checklist</div></div>
+        </div>
+        <div class="content-card">
+            <h3>🔹 Must-Remember Points</h3>
+            <ol>
+                <li>There are <strong>4 types of delay</strong>: processing, queuing, transmission, propagation.</li>
+                <li><strong>d<sub>trans</sub> = L/R</strong> depends on packet size and link rate (NOT distance).</li>
+                <li><strong>d<sub>prop</sub> = d/s</strong> depends on distance and medium speed (NOT packet size or link rate).</li>
+                <li>Don't confuse transmission and propagation! Transmission = "loading time," Propagation = "travel time."</li>
+                <li><strong>Processing delay</strong> = constant, microseconds. <strong>Queuing delay</strong> = variable, can be huge.</li>
+                <li>If <strong>traffic intensity La/R ≥ 1</strong>, queue grows without bound → packet loss.</li>
+                <li><strong>Packet loss</strong> occurs when router buffers (finite size) overflow.</li>
+                <li><strong>Throughput = min{R₁, R₂, ...}</strong> — limited by the bottleneck link (slowest link).</li>
+                <li><strong>Transfer time = F / Throughput</strong>.</li>
+                <li><strong>Constant delays:</strong> processing, transmission, propagation. <strong>Variable delay:</strong> queuing.</li>
+                <li>In modern Internet, the <strong>access network</strong> (home DSL/Cable) is typically the bottleneck.</li>
+                <li>End-to-end delay for one link (simplified) = <strong>L/R + d/s</strong>.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 14: PREVIOUS YEAR QUESTIONS                              -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-exam">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-amber);">📝</div>
+            <div><h2>14. Previous Year Exam Questions &amp; Model Answers</h2><div class="section-sub">All questions from 2017–2023 related to Topic 1.3</div></div>
+        </div>
+
+        <!-- Q1: 2022 Delay Components -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2022</span>
+                <span class="exam-question-text">Q2.a) Consider sending a packet from a source host to a destination host over a fixed route. List the delay components in the end-to-end delay. Which of these delays are constant and which are variable?</span>
+                <span class="exam-marks">2+1 = 3 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p>When a packet is sent from a source to a destination over a fixed route, it passes through a series of routers. At each router (node), the packet experiences <strong>four components of delay</strong>. These four components together form the <strong>nodal delay</strong>:</p>
+
+                    <p><strong>d<sub>nodal</sub> = d<sub>proc</sub> + d<sub>queue</sub> + d<sub>trans</sub> + d<sub>prop</sub></strong></p>
+
+                    <p><strong>The four delay components are:</strong></p>
+
+                    <p><strong>1. Processing Delay (d<sub>proc</sub>):</strong> The time required for the router to examine the packet's header, determine the output link for forwarding (via forwarding table lookup), and check for bit-level errors. This is typically on the order of microseconds.</p>
+
+                    <p><strong>2. Queuing Delay (d<sub>queue</sub>):</strong> The time the packet waits in the router's output buffer (queue) before being transmitted onto the outgoing link. This depends on the intensity of traffic — if many packets are already waiting, the queuing delay is large.</p>
+
+                    <p><strong>3. Transmission Delay (d<sub>trans</sub> = L/R):</strong> The time required for the router to push all L bits of the packet onto the outgoing link, where R is the transmission rate of the link in bps.</p>
+
+                    <p><strong>4. Propagation Delay (d<sub>prop</sub> = d/s):</strong> The time for a bit to physically travel (propagate) across the link from the router to the next node, where d is the link length and s is the propagation speed of the medium.</p>
+
+                    <p style="margin-top: 1.2rem;"><strong>Classification — Constant vs. Variable:</strong></p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Delay Component</th><th>Type</th><th>Reason</th></tr></thead>
+                            <tbody>
+                                <tr><td class="tech-name">Processing Delay (d<sub>proc</sub>)</td><td><strong>Constant</strong></td><td>Depends on router hardware speed, which doesn't change with traffic</td></tr>
+                                <tr><td class="tech-name">Queuing Delay (d<sub>queue</sub>)</td><td><strong>Variable</strong></td><td>Depends on the amount of traffic — varies from zero to very large depending on congestion</td></tr>
+                                <tr><td class="tech-name">Transmission Delay (d<sub>trans</sub>)</td><td><strong>Constant</strong></td><td>Depends only on fixed values: packet size L and link rate R</td></tr>
+                                <tr><td class="tech-name">Propagation Delay (d<sub>prop</sub>)</td><td><strong>Constant</strong></td><td>Depends only on fixed values: link distance d and propagation speed s</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Conclusion:</strong> Three of the four delay components (processing, transmission, propagation) are <strong>constant</strong> for a given network configuration. Only the <strong>queuing delay is variable</strong>, as it depends on the current traffic load at the router.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Q2: 2017 Delay Calculation -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2017</span>
+                <span class="exam-question-text">Q1.c) Two hosts A and B are connected by a single link of rate R bps. They are separated by m meters, propagation speed is s m/s. Host A sends a packet of L bits.<br>i. Express d_prop in terms of m and s.<br>ii. Determine d_trans in terms of L and R.<br>iii. Obtain expression for end-to-end delay.<br>iv. At t = d_trans, where is the last bit?<br>v. If d_prop > d_trans, at t = d_trans, where is the first bit?</span>
+                <span class="exam-marks">Part of combined marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p><strong>(i) Propagation delay in terms of m and s:</strong></p>
+                    <div class="solution-step">
+                        <div class="step-formula">d<sub>prop</sub> = m / s</div>
+                        <p>The propagation delay is the time for a bit to travel the physical distance m of the link, at the propagation speed s of the medium.</p>
+                    </div>
+
+                    <p><strong>(ii) Transmission time in terms of L and R:</strong></p>
+                    <div class="solution-step">
+                        <div class="step-formula">d<sub>trans</sub> = L / R</div>
+                        <p>The transmission delay is the time for Host A to push all L bits of the packet onto the link, at the transmission rate R.</p>
+                    </div>
+
+                    <p><strong>(iii) End-to-end delay (ignoring processing and queuing):</strong></p>
+                    <div class="solution-step">
+                        <div class="step-formula">d<sub>end-to-end</sub> = d<sub>trans</sub> + d<sub>prop</sub> = L/R + m/s</div>
+                        <p>The total delay is the sum of the transmission delay (time to put all bits on the link) and the propagation delay (time for bits to travel the distance).</p>
+                    </div>
+
+                    <p><strong>(iv) At time t = d<sub>trans</sub>, where is the last bit of the packet?</strong></p>
+                    <div class="solution-step">
+                        <p>At time t = d<sub>trans</sub>, Host A has <em>just finished</em> transmitting the packet — the last bit has <em>just been placed</em> onto the link. Therefore, the last bit is <strong>at Host A's end of the link</strong> (i.e., at the beginning of the link, just leaving the transmitter). It has not yet started propagating.</p>
+                    </div>
+
+                    <p><strong>(v) If d<sub>prop</sub> > d<sub>trans</sub>, at time t = d<sub>trans</sub>, where is the first bit?</strong></p>
+                    <div class="solution-step">
+                        <p>The first bit was placed on the link at time t = 0. It has been propagating for d<sub>trans</sub> seconds. Since d<sub>prop</sub> > d<sub>trans</sub>, the first bit has NOT yet reached Host B — it is still <strong>somewhere on the link, between Host A and Host B</strong>.</p>
+                        <p>Specifically, the first bit has traveled a distance of <strong>s × d<sub>trans</sub> = s × (L/R)</strong> meters from Host A. Since d<sub>prop</sub> > d<sub>trans</sub>, this distance is less than m (the full link length), confirming the first bit is still in transit on the link.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Q3: 2019/2020 Throughput -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2019 / 2020</span>
+                <span class="exam-question-text">Q2.a / Q1.b) Host A sends a large file to Host B. Path has three links: R₁ = 500 kbps, R₂ = 2 Mbps, R₃ = 1 Mbps.<br>(i) What is the throughput?<br>(ii) File is 4 million bytes. How long to transfer?<br>(iii) Repeat with R₂ = 100 kbps.</span>
+                <span class="exam-marks">3 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p><strong>(i) Throughput for the file transfer:</strong></p>
+                    <p>The end-to-end throughput is determined by the <strong>bottleneck link</strong> — the link with the lowest transmission rate along the path.</p>
+                    <div class="solution-step">
+                        <div class="step-label">Given links</div>
+                        <p>R₁ = 500 kbps, R₂ = 2 Mbps = 2,000 kbps, R₃ = 1 Mbps = 1,000 kbps</p>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-label">Find bottleneck</div>
+                        <div class="step-formula">Throughput = min{R₁, R₂, R₃} = min{500, 2000, 1000} kbps = <strong style="color: var(--accent-amber);">500 kbps</strong></div>
+                        <p>The bottleneck link is R₁ = 500 kbps.</p>
+                    </div>
+
+                    <p><strong>(ii) Time to transfer the file:</strong></p>
+                    <div class="solution-step">
+                        <div class="step-label">Convert file size</div>
+                        <p>F = 4 million bytes = 4 × 10⁶ bytes = 4 × 10⁶ × 8 bits = 32 × 10⁶ bits</p>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-label">Calculate transfer time</div>
+                        <div class="step-formula">Time = F / Throughput = (32 × 10⁶) / (500 × 10³) = <strong style="color: var(--accent-amber);">64 seconds</strong></div>
+                    </div>
+
+                    <p><strong>(iii) Repeat with R₂ reduced to 100 kbps:</strong></p>
+                    <div class="solution-step">
+                        <div class="step-label">New throughput</div>
+                        <p>R₁ = 500 kbps, R₂ = 100 kbps, R₃ = 1 Mbps = 1,000 kbps</p>
+                        <div class="step-formula">Throughput = min{500, 100, 1000} = <strong style="color: var(--accent-amber);">100 kbps</strong></div>
+                        <p>Now the bottleneck is R₂ = 100 kbps.</p>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-label">New transfer time</div>
+                        <div class="step-formula">Time = (32 × 10⁶) / (100 × 10³) = <strong style="color: var(--accent-amber);">320 seconds ≈ 5.33 minutes</strong></div>
+                    </div>
+
+                    <div class="key-point">
+                        <div class="kp-label">💡 Observation</div>
+                        <p>Reducing R₂ from 2 Mbps to 100 kbps changed the bottleneck from R₁ to R₂, and increased the transfer time from 64 seconds to 320 seconds — a 5× increase, because the new bottleneck is 5× slower than the old one.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Q4: 2023 Store-and-forward (delay context) -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2023</span>
+                <span class="exam-question-text">Q1.b) There is exactly one packet switch between sender and receiver. Transmission rates are R₁ and R₂. Using store-and-forward, what is the total end-to-end delay for a packet of length L? (Ignore queuing, propagation, processing delay.)</span>
+                <span class="exam-marks">3 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p>In <strong>store-and-forward</strong> packet switching, the switch must receive the <strong>entire packet</strong> before it begins forwarding it onto the next link.</p>
+                    <p>The packet travels over two links:</p>
+                    <ul>
+                        <li><strong>Link 1</strong> (sender → switch): rate = R₁. Time to transmit entire packet = <strong>L/R₁</strong></li>
+                        <li><strong>Link 2</strong> (switch → receiver): rate = R₂. Time to transmit entire packet = <strong>L/R₂</strong></li>
+                    </ul>
+                    <p>Since the switch must <em>first completely receive</em> the packet (L/R₁ seconds), and <em>then</em> transmit it (L/R₂ seconds), these two delays occur <strong>sequentially</strong>:</p>
+                    <div class="solution-step">
+                        <div class="step-formula" style="font-size: 1.2rem;">d<sub>end-to-end</sub> = L/R₁ + L/R₂</div>
+                    </div>
+                    <p>This is the total end-to-end delay when ignoring queuing, propagation, and processing delays. It consists of two successive transmission delays — one at the source and one at the switch.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p><strong>CSE 613 — Computer Networks</strong> • Topic 1.3: Delay, Loss &amp; Throughput in Packet-Switched Networks</p>
+        <p style="margin-top: 0.3rem;">University of Chittagong • 6th Semester Final Exam Preparation</p>
+        <p style="margin-top: 0.3rem;">Textbook Reference: Kurose &amp; Ross, "Computer Networking: A Top-Down Approach" — Chapter 1, Sections 1.4 &amp; 1.5</p>
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        document.getElementById('progressBar').style.width = (scrollTop / docHeight * 100) + '%';
+        document.getElementById('backToTop').classList.toggle('visible', scrollTop > 400);
+    });
+</script>
+</body>
+</html>

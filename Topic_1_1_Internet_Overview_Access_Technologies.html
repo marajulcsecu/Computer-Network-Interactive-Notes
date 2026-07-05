@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.1 — Internet Overview, Network Edge & Access Technologies | CSE 613</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===================== CSS VARIABLES ===================== */
+        :root {
+            --bg-body: #0f1117;
+            --bg-page: #161822;
+            --bg-card: #1c1f2e;
+            --bg-card-alt: #1a1d2b;
+            --bg-highlight: #222640;
+            --bg-code: #1e2235;
+            --accent-blue: #4f8ff7;
+            --accent-cyan: #22d3ee;
+            --accent-purple: #a78bfa;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --accent-orange: #fb923c;
+            --accent-teal: #2dd4bf;
+            --accent-indigo: #818cf8;
+            --text-primary: #e8ecf4;
+            --text-secondary: #a0aec0;
+            --text-muted: #6b7a90;
+            --text-heading: #f7fafc;
+            --border-subtle: rgba(255,255,255,0.06);
+            --border-card: rgba(255,255,255,0.08);
+            --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
+            --shadow-glow-blue: 0 0 30px rgba(79,143,247,0.15);
+            --shadow-glow-purple: 0 0 30px rgba(167,139,250,0.12);
+            --gradient-hero: linear-gradient(135deg, #4f8ff7 0%, #a78bfa 50%, #22d3ee 100%);
+            --gradient-blue: linear-gradient(135deg, #4f8ff7, #818cf8);
+            --gradient-purple: linear-gradient(135deg, #a78bfa, #c084fc);
+            --gradient-emerald: linear-gradient(135deg, #34d399, #22d3ee);
+            --gradient-amber: linear-gradient(135deg, #fbbf24, #fb923c);
+            --gradient-rose: linear-gradient(135deg, #fb7185, #a78bfa);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+        }
+
+        /* ===================== BASE STYLES ===================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Background Gradient Blobs */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse 700px 500px at 15% 5%, rgba(79,143,247,0.07), transparent),
+                radial-gradient(ellipse 600px 600px at 85% 40%, rgba(167,139,250,0.05), transparent),
+                radial-gradient(ellipse 500px 400px at 50% 95%, rgba(34,211,238,0.04), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===================== LAYOUT ===================== */
+        .page-wrapper {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===================== TABLE OF CONTENTS ===================== */
+        .toc-nav {
+            position: fixed;
+            top: 50%;
+            right: 1.5rem;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .toc-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .toc-dot:hover, .toc-dot.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: scale(1.4);
+        }
+
+        .toc-dot .toc-tooltip {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            border: 1px solid var(--border-card);
+        }
+
+        .toc-dot:hover .toc-tooltip {
+            opacity: 1;
+        }
+
+        /* ===================== HERO SECTION ===================== */
+        .hero {
+            text-align: center;
+            padding: 3.5rem 2rem 3rem;
+            margin-bottom: 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient-hero);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 120%, rgba(79,143,247,0.08), transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 1rem;
+            background: rgba(79,143,247,0.1);
+            border: 1px solid rgba(79,143,247,0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===================== TOC BOX ===================== */
+        .toc-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .toc-box h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            columns: 2;
+            column-gap: 2rem;
+        }
+
+        .toc-list li {
+            break-inside: avoid;
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+            transition: color 0.2s;
+        }
+
+        .toc-list a:hover {
+            color: var(--accent-blue);
+        }
+
+        .toc-list .toc-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 28px;
+        }
+
+        /* ===================== SECTION HEADERS ===================== */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-subtle);
+            position: relative;
+        }
+
+        .section-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            letter-spacing: -0.3px;
+        }
+
+        .section-header .section-sub {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 0.1rem;
+        }
+
+        /* ===================== CONTENT CARDS ===================== */
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.2s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-1px);
+        }
+
+        .content-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .content-card h4 {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin: 1.5rem 0 0.7rem;
+        }
+
+        .content-card p {
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .content-card ul, .content-card ol {
+            margin: 0.5rem 0 1rem 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .content-card li {
+            margin-bottom: 0.4rem;
+            font-size: 0.93rem;
+        }
+
+        .content-card li::marker {
+            color: var(--accent-blue);
+        }
+
+        /* ===================== SPECIAL BOXES ===================== */
+        .definition-box {
+            background: linear-gradient(135deg, rgba(79,143,247,0.08), rgba(129,140,248,0.05));
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .definition-box .def-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .definition-box p {
+            margin-bottom: 0;
+            color: var(--text-primary);
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(249,115,22,0.05));
+            border-left: 4px solid var(--accent-amber);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .key-point .kp-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--accent-amber);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(34,211,238,0.05));
+            border-left: 4px solid var(--accent-emerald);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .example-box .ex-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--accent-emerald);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(251,113,133,0.08), rgba(167,139,250,0.05));
+            border-left: 4px solid var(--accent-rose);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .warning-box .warn-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--accent-rose);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ===================== TABLES ===================== */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        thead {
+            background: var(--bg-highlight);
+        }
+
+        thead th {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-card);
+        }
+
+        tbody td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            vertical-align: top;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .tech-name {
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        /* ===================== DIAGRAM CONTAINERS ===================== */
+        .diagram-container {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diagram-container .diagram-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 1.2rem;
+        }
+
+        /* SVG Diagrams */
+        .diagram-svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        /* ===================== EXAM QUESTION CARDS ===================== */
+        .exam-section {
+            margin-top: 3rem;
+        }
+
+        .exam-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(251,191,36,0.15);
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .exam-card-header {
+            background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(249,115,22,0.06));
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(251,191,36,0.1);
+        }
+
+        .exam-year {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.7rem;
+            background: rgba(251,191,36,0.15);
+            border: 1px solid rgba(251,191,36,0.25);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-amber);
+        }
+
+        .exam-marks {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.6rem;
+            background: rgba(167,139,250,0.12);
+            border: 1px solid rgba(167,139,250,0.2);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+        }
+
+        .exam-question-text {
+            font-weight: 600;
+            color: var(--text-heading);
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .exam-card-body {
+            padding: 1.8rem;
+        }
+
+        .exam-card-body h4 {
+            color: var(--accent-emerald);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .exam-card-body h4::before {
+            content: '✎';
+            font-size: 1rem;
+        }
+
+        .answer-content p {
+            margin-bottom: 0.7rem;
+        }
+
+        /* ===================== ANIMATED DIAGRAM: ACCESS NETWORK ===================== */
+        .access-network-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 400px;
+        }
+
+        .net-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: default;
+            transition: transform 0.3s ease;
+        }
+
+        .net-node:hover {
+            transform: scale(1.08);
+        }
+
+        .node-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .node-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 90px;
+        }
+
+        /* Connection lines animation */
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+            transform-origin: left center;
+            opacity: 0.4;
+        }
+
+        /* Pulse animation for nodes */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(79,143,247,0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(79,143,247,0); }
+        }
+
+        .node-icon.pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Data flow animation */
+        @keyframes dataFlow {
+            0% { left: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        .data-packet {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: dataFlow 3s infinite ease-in-out;
+        }
+
+        /* ===================== TECHNOLOGY CARDS GRID ===================== */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .tech-card {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(79,143,247,0.3);
+        }
+
+        .tech-card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .tech-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem !important;
+            margin-top: 0 !important;
+        }
+
+        .tech-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .tech-card .speed-badge {
+            display: inline-flex;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .speed-badge.home { background: rgba(79,143,247,0.12); color: var(--accent-blue); border: 1px solid rgba(79,143,247,0.2); }
+        .speed-badge.enterprise { background: rgba(52,211,153,0.12); color: var(--accent-emerald); border: 1px solid rgba(52,211,153,0.2); }
+        .speed-badge.wwan { background: rgba(251,191,36,0.12); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.2); }
+
+        /* ===================== COMPARISON DIAGRAMS ===================== */
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: stretch;
+            margin: 1.5rem 0;
+        }
+
+        .compare-card {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+        }
+
+        .compare-vs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* ===================== SCROLL PROGRESS BAR ===================== */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: var(--gradient-hero);
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        /* ===================== BACK TO TOP ===================== */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-blue);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(79,143,247,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===================== INLINE HIGHLIGHTS ===================== */
+        .hl-blue { color: var(--accent-blue); font-weight: 600; }
+        .hl-purple { color: var(--accent-purple); font-weight: 600; }
+        .hl-emerald { color: var(--accent-emerald); font-weight: 600; }
+        .hl-amber { color: var(--accent-amber); font-weight: 600; }
+        .hl-rose { color: var(--accent-rose); font-weight: 600; }
+        .hl-cyan { color: var(--accent-cyan); font-weight: 600; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-code);
+            color: var(--accent-cyan);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        strong { color: var(--text-heading); }
+
+        /* ===================== FOOTER ===================== */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 768px) {
+            .page-wrapper { padding: 1rem; }
+            .hero h1 { font-size: 1.6rem; }
+            .hero { padding: 2rem 1.2rem; }
+            .toc-list { columns: 1; }
+            .tech-grid { grid-template-columns: 1fr; }
+            .comparison-row { grid-template-columns: 1fr; }
+            .compare-vs { padding: 0.5rem 0; }
+            .toc-nav { display: none; }
+            .section-header h2 { font-size: 1.2rem; }
+        }
+
+        /* ===================== SVG ANIMATION STYLES ===================== */
+        @keyframes dashMove {
+            to { stroke-dashoffset: -20; }
+        }
+        .animated-line {
+            stroke-dasharray: 8, 6;
+            animation: dashMove 1s linear infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .blink-dot {
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        /* ===================== PRINT STYLES ===================== */
+        @media print {
+            body { background: #fff; color: #222; }
+            .toc-nav, .back-to-top, .progress-bar { display: none; }
+            .content-card, .exam-card, .definition-box, .key-point, .example-box {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+                background: #f9f9f9;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Back to Top -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- Side Nav Dots -->
+<nav class="toc-nav" id="tocNav">
+    <div class="toc-dot" onclick="scrollToSection('sec-intro')"><span class="toc-tooltip">Introduction</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-what-is-internet')"><span class="toc-tooltip">What is the Internet?</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-network-edge')"><span class="toc-tooltip">Network Edge</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-access-tech')"><span class="toc-tooltip">Access Technologies</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-home-access')"><span class="toc-tooltip">Home Access</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-enterprise-access')"><span class="toc-tooltip">Enterprise Access</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-wwan-access')"><span class="toc-tooltip">Wide-Area Wireless</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-classification')"><span class="toc-tooltip">Classification Table</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-physical-media')"><span class="toc-tooltip">Physical Media</span></div>
+    <div class="toc-dot" onclick="scrollToSection('sec-exam-questions')"><span class="toc-tooltip">Exam Questions</span></div>
+</nav>
+
+<div class="page-wrapper">
+
+    <!-- ============================= HERO ============================= -->
+    <div class="hero" id="sec-intro">
+        <div class="hero-badge">📘 Topic 1.1 — Chapter 1: Computer Networks &amp; the Internet</div>
+        <h1>Internet Overview, Network Edge<br>&amp; Access Technologies</h1>
+        <p class="subtitle">Complete exam-ready preparation guide — with detailed explanations, diagrams, examples, and all previous year questions with model answers</p>
+    </div>
+
+    <!-- ============================= TOC ============================= -->
+    <div class="toc-box">
+        <h2>📑 Table of Contents</h2>
+        <ol class="toc-list">
+            <li><a href="#sec-what-is-internet"><span class="toc-num">1</span> What is the Internet?</a></li>
+            <li><a href="#sec-network-edge"><span class="toc-num">2</span> Network Edge — End Systems &amp; Hosts</a></li>
+            <li><a href="#sec-access-tech"><span class="toc-num">3</span> Access Networks — The Big Picture</a></li>
+            <li><a href="#sec-home-access"><span class="toc-num">4</span> Home Access Technologies</a></li>
+            <li><a href="#sec-enterprise-access"><span class="toc-num">5</span> Enterprise Access Technologies</a></li>
+            <li><a href="#sec-wwan-access"><span class="toc-num">6</span> Wide-Area Wireless Access</a></li>
+            <li><a href="#sec-classification"><span class="toc-num">7</span> Classification Summary Table</a></li>
+            <li><a href="#sec-comparison"><span class="toc-num">8</span> Comparison of Wireless Access Technologies</a></li>
+            <li><a href="#sec-physical-media"><span class="toc-num">9</span> Physical Media Overview</a></li>
+            <li><a href="#sec-edge-router"><span class="toc-num">10</span> How End Systems Access the Edge Router</a></li>
+            <li><a href="#sec-key-summary"><span class="toc-num">11</span> Key Points Summary for Exam</a></li>
+            <li><a href="#sec-exam-questions"><span class="toc-num">12</span> Previous Year Questions &amp; Answers</a></li>
+        </ol>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 1: WHAT IS THE INTERNET?                                 -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-what-is-internet">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-blue);">🌐</div>
+            <div>
+                <h2>1. What is the Internet?</h2>
+                <div class="section-sub">The world's largest computer network — understanding its building blocks</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Understanding the Internet — Two Perspectives</h3>
+
+            <p>Before diving into access technologies, you must first understand <strong>what the Internet actually is</strong>. There are two ways to describe it:</p>
+
+            <h4>Perspective 1: "Nuts and Bolts" Description (Hardware/Software View)</h4>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>Internet</strong> is a global computer network — a "network of networks" — that interconnects billions of computing devices (called <span class="hl-blue">hosts</span> or <span class="hl-blue">end systems</span>) throughout the world using <span class="hl-purple">communication links</span> and <span class="hl-emerald">packet switches</span>.</p>
+            </div>
+
+            <p>Let's break this down piece by piece:</p>
+
+            <ul>
+                <li><strong>End Systems (Hosts):</strong> These are the devices at the "edge" of the Internet — your laptop, smartphone, smart TV, web server, IoT sensor, etc. They are called <em>end systems</em> because they sit at the "end" (or edge) of the Internet. They are also called <em>hosts</em> because they host (run) application programs like a web browser, email client, or video streaming app.</li>
+                <li><strong>Communication Links:</strong> These are the physical or wireless connections that carry data between devices. Examples include fiber optic cables, copper wires (twisted pair), coaxial cables, and radio waves (wireless signals). Different links transmit data at different rates — this rate is called the <span class="hl-blue">transmission rate</span> or <span class="hl-blue">bandwidth</span>, measured in bits per second (bps).</li>
+                <li><strong>Packet Switches:</strong> When one end system wants to send data to another, it breaks the data into smaller chunks called <span class="hl-amber">packets</span>. These packets travel through the network via <em>packet switches</em> — the two most prominent types being <span class="hl-emerald">routers</span> (in the network core) and <span class="hl-emerald">link-layer switches</span> (in access networks).</li>
+                <li><strong>ISPs (Internet Service Providers):</strong> End systems connect to the Internet through ISPs — organizations like local telecom companies, cable companies, or mobile network operators. ISPs themselves are interconnected, creating the global Internet.</li>
+                <li><strong>Protocols:</strong> All communication in the Internet is governed by <em>protocols</em> — rules and standards that define the format and order of messages. The two most important are <span class="hl-blue">TCP (Transmission Control Protocol)</span> and <span class="hl-blue">IP (Internet Protocol)</span>, collectively called <strong>TCP/IP</strong>.</li>
+            </ul>
+
+            <h4>Perspective 2: "Services" Description (What the Internet does for users)</h4>
+            <p>From this perspective, the Internet is an <strong>infrastructure that provides services to applications</strong>. Applications like web browsing, email, social media, video streaming, online gaming, etc., run on end systems and use the Internet to exchange data. The Internet provides a <em>socket interface</em> — a set of rules that applications must follow to have the Internet deliver their data.</p>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Key Point for Exam</div>
+                <p>The Internet can be described as: (1) a "network of networks" interconnecting billions of end systems via communication links and packet switches, governed by protocols (especially TCP/IP); or (2) an infrastructure that provides services to distributed applications.</p>
+            </div>
+        </div>
+
+        <!-- DIAGRAM: Internet Structure -->
+        <div class="diagram-container">
+            <div class="diagram-title">📊 Diagram: Structure of the Internet</div>
+            <svg class="diagram-svg" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+                <!-- Internet Cloud -->
+                <ellipse cx="400" cy="200" rx="160" ry="90" fill="rgba(79,143,247,0.08)" stroke="rgba(79,143,247,0.3)" stroke-width="2" stroke-dasharray="8,4"/>
+                <text x="400" y="195" text-anchor="middle" fill="#4f8ff7" font-size="16" font-weight="700" font-family="Inter">Internet Core</text>
+                <text x="400" y="215" text-anchor="middle" fill="#6b7a90" font-size="11" font-family="Inter">(Routers &amp; Packet Switches)</text>
+
+                <!-- Home Network -->
+                <rect x="20" y="30" width="140" height="100" rx="14" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
+                <text x="90" y="55" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="700" font-family="Inter">🏠 Home Network</text>
+                <text x="90" y="75" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Laptop, Smart TV</text>
+                <text x="90" y="90" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Smartphone, Tablet</text>
+                <text x="90" y="115" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">via DSL / Cable / FTTH</text>
+
+                <!-- Enterprise Network -->
+                <rect x="20" y="290" width="140" height="100" rx="14" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.3)" stroke-width="1.5"/>
+                <text x="90" y="315" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="Inter">🏢 Enterprise</text>
+                <text x="90" y="335" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Workstations, Servers</text>
+                <text x="90" y="350" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Printers, IP Phones</text>
+                <text x="90" y="375" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">via Ethernet / WiFi</text>
+
+                <!-- Mobile Network -->
+                <rect x="640" y="30" width="140" height="100" rx="14" fill="rgba(251,191,36,0.1)" stroke="rgba(251,191,36,0.3)" stroke-width="1.5"/>
+                <text x="710" y="55" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700" font-family="Inter">📱 Mobile Users</text>
+                <text x="710" y="75" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Smartphones, Tablets</text>
+                <text x="710" y="90" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">IoT Devices</text>
+                <text x="710" y="115" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">via 3G / 4G LTE / 5G</text>
+
+                <!-- Data Center -->
+                <rect x="640" y="290" width="140" height="100" rx="14" fill="rgba(251,113,133,0.1)" stroke="rgba(251,113,133,0.3)" stroke-width="1.5"/>
+                <text x="710" y="315" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="700" font-family="Inter">🗄️ Data Centers</text>
+                <text x="710" y="335" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Web Servers</text>
+                <text x="710" y="350" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">Cloud Services</text>
+                <text x="710" y="375" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">via High-speed Ethernet</text>
+
+                <!-- ISP boxes -->
+                <rect x="250" y="10" width="80" height="35" rx="8" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.3)" stroke-width="1"/>
+                <text x="290" y="32" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600" font-family="Inter">Local ISP</text>
+
+                <rect x="470" y="10" width="80" height="35" rx="8" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.3)" stroke-width="1"/>
+                <text x="510" y="32" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600" font-family="Inter">Mobile ISP</text>
+
+                <rect x="250" y="375" width="80" height="35" rx="8" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.3)" stroke-width="1"/>
+                <text x="290" y="397" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600" font-family="Inter">Regional ISP</text>
+
+                <rect x="470" y="375" width="80" height="35" rx="8" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.3)" stroke-width="1"/>
+                <text x="510" y="397" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600" font-family="Inter">Tier-1 ISP</text>
+
+                <!-- Connection lines -->
+                <line x1="160" y1="80" x2="250" y2="80" stroke="rgba(167,139,250,0.4)" stroke-width="1.5" class="animated-line"/>
+                <line x1="290" y1="45" x2="320" y2="130" stroke="rgba(34,211,238,0.3)" stroke-width="1.5" class="animated-line"/>
+                
+                <line x1="160" y1="340" x2="260" y2="340" stroke="rgba(52,211,153,0.4)" stroke-width="1.5" class="animated-line"/>
+                <line x1="290" y1="375" x2="330" y2="280" stroke="rgba(34,211,238,0.3)" stroke-width="1.5" class="animated-line"/>
+
+                <line x1="640" y1="80" x2="560" y2="80" stroke="rgba(251,191,36,0.4)" stroke-width="1.5" class="animated-line"/>
+                <line x1="510" y1="45" x2="480" y2="130" stroke="rgba(34,211,238,0.3)" stroke-width="1.5" class="animated-line"/>
+
+                <line x1="640" y1="340" x2="550" y2="340" stroke="rgba(251,113,133,0.4)" stroke-width="1.5" class="animated-line"/>
+                <line x1="510" y1="375" x2="470" y2="280" stroke="rgba(34,211,238,0.3)" stroke-width="1.5" class="animated-line"/>
+
+                <!-- Router symbols in core -->
+                <circle cx="340" cy="170" r="8" fill="rgba(79,143,247,0.4)" stroke="#4f8ff7" stroke-width="1.5"/>
+                <circle cx="460" cy="170" r="8" fill="rgba(79,143,247,0.4)" stroke="#4f8ff7" stroke-width="1.5"/>
+                <circle cx="400" cy="240" r="8" fill="rgba(79,143,247,0.4)" stroke="#4f8ff7" stroke-width="1.5"/>
+                <circle cx="370" cy="200" r="5" fill="#4f8ff7" class="blink-dot"/>
+                <circle cx="430" cy="200" r="5" fill="#4f8ff7" class="blink-dot"/>
+
+                <line x1="340" y1="170" x2="460" y2="170" stroke="rgba(79,143,247,0.3)" stroke-width="1" class="animated-line"/>
+                <line x1="340" y1="170" x2="400" y2="240" stroke="rgba(79,143,247,0.3)" stroke-width="1" class="animated-line"/>
+                <line x1="460" y1="170" x2="400" y2="240" stroke="rgba(79,143,247,0.3)" stroke-width="1" class="animated-line"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 2: NETWORK EDGE                                          -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-network-edge">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-purple);">📌</div>
+            <div>
+                <h2>2. Network Edge — End Systems &amp; Hosts</h2>
+                <div class="section-sub">The devices at the periphery of the Internet</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 What is the Network Edge?</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>The <strong>network edge</strong> refers to the end systems (hosts) that are connected to the Internet. These are the devices where users and applications reside. The network edge is where data originates and where data is consumed.</p>
+            </div>
+
+            <p>Think of the Internet like a postal system:</p>
+            <ul>
+                <li>The <strong>network edge</strong> = your house and the destination house (where letters originate and are delivered)</li>
+                <li>The <strong>access network</strong> = the local road connecting your house to the nearest post office</li>
+                <li>The <strong>network core</strong> = the national highway system and sorting centers that move mail between cities</li>
+            </ul>
+
+            <h4>Types of End Systems</h4>
+            <ul>
+                <li><strong>Traditional:</strong> Desktop PCs, laptops, workstations, servers</li>
+                <li><strong>Mobile:</strong> Smartphones, tablets, laptops with wireless connectivity</li>
+                <li><strong>IoT (Internet of Things):</strong> Smart home devices (thermostats, cameras, lights), wearables, connected appliances, industrial sensors</li>
+                <li><strong>Non-traditional:</strong> Smart TVs, gaming consoles, connected cars, medical devices</li>
+            </ul>
+
+            <p>End systems are also called <strong>hosts</strong> because they <em>host</em> (i.e., run) application programs. Hosts can be further divided into:</p>
+            <ul>
+                <li><strong>Clients:</strong> Hosts that typically request and receive services (e.g., your laptop running a web browser)</li>
+                <li><strong>Servers:</strong> Hosts that provide services (e.g., a machine hosting a website). Today, most servers reside in large <strong>data centers</strong></li>
+            </ul>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Key Point for Exam</div>
+                <p>End systems sit at the <em>edge</em> of the Internet. They connect to the Internet through <strong>access networks</strong>. The device connecting the end system's local network to the first router in the ISP's network is called the <strong>edge router</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 3: ACCESS NETWORKS — BIG PICTURE                         -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-access-tech">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-emerald);">🔌</div>
+            <div>
+                <h2>3. Access Networks — The Big Picture</h2>
+                <div class="section-sub">How end systems physically connect to the first router (edge router)</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 What is an Access Network?</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p>An <strong>access network</strong> is the network that physically connects an end system to the first router (called the <strong>edge router</strong>) on a path from the end system to any other distant end system. It is the "first mile" (or "last mile") of the Internet connection.</p>
+            </div>
+
+            <p>In simple words: the <strong>access network is the bridge between your device and the Internet</strong>. When you use WiFi at home, when your office uses Ethernet cables, or when you use 4G on your phone — each of these is a different <em>access technology</em>.</p>
+
+            <h4>Three Categories of Access Networks</h4>
+            <p>Access technologies can be broadly classified into <strong>three categories</strong>:</p>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-card-icon">🏠</div>
+                    <h4 style="color: var(--accent-blue);">Home Access</h4>
+                    <p>Technologies that connect residential users to the Internet from their homes.</p>
+                    <span class="speed-badge home">DSL, Cable, FTTH, Satellite, Dial-up</span>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-card-icon">🏢</div>
+                    <h4 style="color: var(--accent-emerald);">Enterprise Access</h4>
+                    <p>Technologies used in companies, universities, and organizations for high-speed networking.</p>
+                    <span class="speed-badge enterprise">Ethernet, WiFi (802.11)</span>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-card-icon">📡</div>
+                    <h4 style="color: var(--accent-amber);">Wide-Area Wireless Access</h4>
+                    <p>Technologies that provide Internet access via cellular mobile networks over large areas.</p>
+                    <span class="speed-badge wwan">3G, 4G LTE, 5G</span>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Exam Tip</div>
+                <p>When asked to "list and classify access technologies," you must name at least the number asked (4 or 6), and then put each into one of these three categories: <strong>Home Access, Enterprise Access, or Wide-Area Wireless Access</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 4: HOME ACCESS TECHNOLOGIES                              -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-home-access">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-blue);">🏠</div>
+            <div>
+                <h2>4. Home Access Technologies (Detailed)</h2>
+                <div class="section-sub">DSL, Cable (HFC), FTTH, Satellite, Dial-up</div>
+            </div>
+        </div>
+
+        <!-- 4.1 DSL -->
+        <div class="content-card">
+            <h3>🔹 4.1 DSL (Digital Subscriber Line)</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>DSL (Digital Subscriber Line)</strong> is a home access technology that provides high-speed Internet access over the existing <strong>telephone line</strong> (twisted-pair copper wire) that already connects your home to the telephone company's central office (CO).</p>
+            </div>
+
+            <h4>How Does DSL Work?</h4>
+            <p>Imagine you already have a phone line at home (from the telephone company). DSL uses that <strong>same copper wire</strong> to carry both telephone voice signals AND Internet data <em>at the same time</em>. This is possible because voice and data use <strong>different frequency bands</strong> on the same wire:</p>
+
+            <ul>
+                <li><strong>0 – 4 kHz:</strong> Ordinary telephone call (voice) — this is the low-frequency band</li>
+                <li><strong>4 – 50 kHz:</strong> Upstream Internet data (from your home to the Internet) — medium frequency</li>
+                <li><strong>50 kHz – 1 MHz:</strong> Downstream Internet data (from the Internet to your home) — high frequency</li>
+            </ul>
+
+            <p>A device called a <strong>splitter</strong> at your home separates the voice and data signals. At the telephone company's <strong>central office (CO)</strong>, a device called a <strong>DSLAM (DSL Access Multiplexer)</strong> separates the incoming signal: it sends the voice data to the telephone network and the Internet data to the ISP's network.</p>
+
+            <h4>Key Characteristics of DSL</h4>
+            <ul>
+                <li><strong>Asymmetric speeds:</strong> Download speed is much higher than upload speed. Typical rates: <code>24 Mbps downstream</code>, <code>2.5 Mbps upstream</code> (newer ADSL2+). This is because most home users download far more data than they upload.</li>
+                <li><strong>Dedicated line:</strong> Your DSL connection is <em>not shared</em> with your neighbors — the phone line runs directly from your house to the CO, giving you a dedicated connection.</li>
+                <li><strong>Distance-sensitive:</strong> DSL performance degrades with distance. The farther your home is from the CO, the slower your speed. Generally limited to about <strong>5–10 km</strong> from the CO.</li>
+                <li><strong>Uses existing infrastructure:</strong> No new cables needed — uses the same old telephone wire.</li>
+            </ul>
+
+            <div class="example-box">
+                <div class="ex-label">💡 Real-World Analogy</div>
+                <p>Think of your phone line as a multi-lane highway. Before DSL, only one lane (low frequency) was used for voice calls. DSL opens up additional lanes on the same highway for Internet data, so voice and data travel simultaneously without interfering.</p>
+            </div>
+
+            <!-- DSL Diagram -->
+            <div class="diagram-container">
+                <div class="diagram-title">📊 Diagram: DSL Connection Architecture</div>
+                <svg class="diagram-svg" viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Home -->
+                    <rect x="10" y="50" width="130" height="120" rx="12" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
+                    <text x="75" y="75" text-anchor="middle" fill="#a78bfa" font-size="12" font-weight="700" font-family="Inter">🏠 Home</text>
+                    <text x="75" y="100" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">PC / Laptop</text>
+                    <text x="75" y="120" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Inter">DSL Modem</text>
+                    <text x="75" y="140" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="600" font-family="Inter">Splitter</text>
+                    <text x="75" y="158" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Phone + Data</text>
+
+                    <!-- Telephone Line -->
+                    <line x1="140" y1="110" x2="310" y2="110" stroke="rgba(251,191,36,0.5)" stroke-width="2.5" class="animated-line"/>
+                    <text x="225" y="98" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="600" font-family="Inter">Existing Telephone Line</text>
+                    <text x="225" y="130" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">(Twisted Pair Copper)</text>
+                    <text x="225" y="145" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">≤ 5-10 km</text>
+
+                    <!-- Central Office -->
+                    <rect x="310" y="30" width="160" height="160" rx="12" fill="rgba(52,211,153,0.08)" stroke="rgba(52,211,153,0.3)" stroke-width="1.5"/>
+                    <text x="390" y="55" text-anchor="middle" fill="#34d399" font-size="12" font-weight="700" font-family="Inter">🏛️ Central Office (CO)</text>
+                    <text x="390" y="80" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600" font-family="Inter">DSLAM</text>
+                    <text x="390" y="100" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">(DSL Access Multiplexer)</text>
+                    <text x="390" y="125" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="Inter">Separates voice &amp; data</text>
+                    <text x="390" y="155" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Voice → Telephone Network</text>
+                    <text x="390" y="170" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Data → Internet</text>
+
+                    <!-- To Internet -->
+                    <line x1="470" y1="80" x2="590" y2="80" stroke="rgba(79,143,247,0.5)" stroke-width="2" class="animated-line"/>
+                    <rect x="590" y="60" width="110" height="40" rx="10" fill="rgba(79,143,247,0.1)" stroke="rgba(79,143,247,0.3)" stroke-width="1"/>
+                    <text x="645" y="84" text-anchor="middle" fill="#4f8ff7" font-size="11" font-weight="600" font-family="Inter">🌐 Internet</text>
+
+                    <!-- To Telephone Network -->
+                    <line x1="470" y1="150" x2="590" y2="150" stroke="rgba(251,113,133,0.4)" stroke-width="2" class="animated-line"/>
+                    <rect x="590" y="130" width="110" height="40" rx="10" fill="rgba(251,113,133,0.08)" stroke="rgba(251,113,133,0.3)" stroke-width="1"/>
+                    <text x="645" y="154" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" font-family="Inter">📞 Telephone</text>
+
+                    <!-- Speed labels -->
+                    <text x="225" y="190" text-anchor="middle" fill="#4f8ff7" font-size="9" font-weight="600" font-family="Inter">↓ 24 Mbps Down | ↑ 2.5 Mbps Up</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 4.2 CABLE -->
+        <div class="content-card">
+            <h3>🔹 4.2 Cable Internet Access (HFC — Hybrid Fiber Coax)</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Cable Internet access</strong> uses the existing <strong>cable television (CATV) infrastructure</strong> to provide Internet service. It combines <strong>fiber optic cables</strong> (from the cable head end to neighborhood-level nodes) and <strong>coaxial cables</strong> (from the node to individual homes), hence the name <strong>HFC (Hybrid Fiber Coax)</strong>.</p>
+            </div>
+
+            <h4>How Does Cable Internet Work?</h4>
+            <p>If you have cable TV at home, the same coaxial cable that delivers TV channels also carries Internet data. Here's how the system is structured:</p>
+
+            <ol>
+                <li><strong>Cable Head End:</strong> This is the cable company's main facility (analogous to the telephone company's central office). It connects to the Internet backbone.</li>
+                <li><strong>Fiber optic cables</strong> run from the head end to <strong>neighborhood-level junction points</strong> called <em>fiber nodes</em>. These fiber links are very high speed.</li>
+                <li><strong>Coaxial cables</strong> run from each fiber node to individual homes (typically 500–2,000 homes share one fiber node).</li>
+                <li>At home, a <strong>cable modem</strong> connects your computer to the coaxial cable. At the cable head end, a <strong>CMTS (Cable Modem Termination System)</strong> converts the analog signals from the cable modem into digital IP packets.</li>
+            </ol>
+
+            <h4>Key Characteristics of Cable Internet</h4>
+            <ul>
+                <li><strong>Shared medium:</strong> Unlike DSL (which has a dedicated line), cable Internet is a <span class="hl-rose">shared medium</span>. Multiple homes in your neighborhood share the same coaxial cable. This means that if many neighbors are using the Internet at the same time (e.g., evening peak hours), your speed may decrease.</li>
+                <li><strong>Asymmetric speeds:</strong> Typical rates: <code>42.8 Mbps downstream</code>, <code>30.7 Mbps upstream</code> (DOCSIS 2.0). Newer DOCSIS 3.x standards offer much higher speeds.</li>
+                <li><strong>Hybrid architecture:</strong> Uses fiber for the long-distance portion (head end to node) and coax for the last-mile to homes — hence "Hybrid Fiber Coax."</li>
+                <li><strong>Always-on:</strong> Unlike dial-up, cable Internet is always connected — no need to dial in.</li>
+            </ul>
+
+            <div class="warning-box">
+                <div class="warn-label">⚠️ Important Difference from DSL</div>
+                <p><strong>DSL = Dedicated line</strong> (your phone line goes directly to the CO; not shared).<br>
+                <strong>Cable = Shared medium</strong> (coaxial cable is shared among neighborhood homes). This is a very common exam comparison point!</p>
+            </div>
+
+            <!-- Cable Diagram -->
+            <div class="diagram-container">
+                <div class="diagram-title">📊 Diagram: HFC (Cable) Architecture</div>
+                <svg class="diagram-svg" viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Homes -->
+                    <rect x="10" y="20" width="100" height="55" rx="10" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+                    <text x="60" y="42" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600" font-family="Inter">🏠 Home 1</text>
+                    <text x="60" y="58" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Cable Modem</text>
+
+                    <rect x="10" y="95" width="100" height="55" rx="10" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+                    <text x="60" y="117" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600" font-family="Inter">🏠 Home 2</text>
+                    <text x="60" y="133" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Cable Modem</text>
+
+                    <rect x="10" y="170" width="100" height="55" rx="10" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+                    <text x="60" y="192" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600" font-family="Inter">🏠 Home 3</text>
+                    <text x="60" y="208" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Cable Modem</text>
+
+                    <!-- Coaxial Cable Lines -->
+                    <line x1="110" y1="47" x2="230" y2="120" stroke="rgba(251,191,36,0.5)" stroke-width="2" class="animated-line"/>
+                    <line x1="110" y1="122" x2="230" y2="120" stroke="rgba(251,191,36,0.5)" stroke-width="2" class="animated-line"/>
+                    <line x1="110" y1="197" x2="230" y2="120" stroke="rgba(251,191,36,0.5)" stroke-width="2" class="animated-line"/>
+                    <text x="160" y="255" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="600" font-family="Inter">Coaxial Cable (Shared)</text>
+
+                    <!-- Fiber Node -->
+                    <rect x="220" y="95" width="95" height="55" rx="12" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+                    <text x="268" y="117" text-anchor="middle" fill="#34d399" font-size="10" font-weight="700" font-family="Inter">Fiber Node</text>
+                    <text x="268" y="135" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Coax ↔ Fiber</text>
+
+                    <!-- Fiber Line -->
+                    <line x1="315" y1="122" x2="470" y2="122" stroke="rgba(79,143,247,0.6)" stroke-width="3" class="animated-line"/>
+                    <text x="393" y="110" text-anchor="middle" fill="#4f8ff7" font-size="9" font-weight="600" font-family="Inter">Fiber Optic Cable</text>
+                    <text x="393" y="145" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">(Very High Speed)</text>
+
+                    <!-- Cable Head End -->
+                    <rect x="470" y="75" width="140" height="95" rx="14" fill="rgba(79,143,247,0.08)" stroke="rgba(79,143,247,0.3)" stroke-width="1.5"/>
+                    <text x="540" y="100" text-anchor="middle" fill="#4f8ff7" font-size="11" font-weight="700" font-family="Inter">Cable Head End</text>
+                    <text x="540" y="120" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="600" font-family="Inter">CMTS</text>
+                    <text x="540" y="138" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">(Cable Modem</text>
+                    <text x="540" y="152" text-anchor="middle" fill="#6b7a90" font-size="8" font-family="Inter">Termination System)</text>
+
+                    <!-- To Internet -->
+                    <line x1="610" y1="122" x2="700" y2="122" stroke="rgba(79,143,247,0.5)" stroke-width="2" class="animated-line"/>
+                    <rect x="700" y="102" width="85" height="40" rx="10" fill="rgba(79,143,247,0.1)" stroke="rgba(79,143,247,0.3)" stroke-width="1"/>
+                    <text x="742" y="126" text-anchor="middle" fill="#4f8ff7" font-size="11" font-weight="600" font-family="Inter">🌐 Internet</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 4.3 FTTH -->
+        <div class="content-card">
+            <h3>🔹 4.3 FTTH (Fiber to the Home)</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>FTTH (Fiber to the Home)</strong> provides an optical fiber path from the ISP's central office (CO) <strong>directly to the home</strong>. It is the fastest and most modern home access technology, potentially providing Internet speeds of <strong>gigabits per second</strong>.</p>
+            </div>
+
+            <h4>How Does FTTH Work?</h4>
+            <p>Unlike DSL (which uses copper phone lines) and Cable (which uses coax for the last mile), FTTH uses <strong>optical fiber all the way to your home</strong>. Since fiber optic cables use light pulses to carry data, they can achieve extremely high speeds over very long distances without signal degradation.</p>
+
+            <p>There are two main architectures for FTTH:</p>
+
+            <ul>
+                <li><strong>Active Optical Network (AON):</strong> Uses electrically-powered switches in the distribution network to route signals to individual homes. Essentially a switched Ethernet network.</li>
+                <li><strong>Passive Optical Network (PON):</strong> Uses unpowered optical splitters to divide a single fiber from the CO into multiple fibers going to different homes (typically 32–128 homes share one fiber from the CO). The splitter is passive — it needs no electricity. This is the more common approach. Technologies like <strong>GPON (Gigabit PON)</strong> and <strong>EPON (Ethernet PON)</strong> fall under this category.</li>
+            </ul>
+
+            <h4>Key Characteristics of FTTH</h4>
+            <ul>
+                <li><strong>Extremely high speed:</strong> Can deliver <code>1 Gbps</code> or more downstream and upstream.</li>
+                <li><strong>Symmetric speeds possible:</strong> Unlike DSL and Cable, FTTH can offer the same speed for upload and download.</li>
+                <li><strong>Long distance:</strong> Fiber doesn't suffer from signal degradation over distance like copper.</li>
+                <li><strong>Future-proof:</strong> The most forward-looking access technology.</li>
+                <li><strong>Category:</strong> Home Access.</li>
+            </ul>
+
+            <div class="example-box">
+                <div class="ex-label">💡 Real-World Example</div>
+                <p>Google Fiber, Verizon FiOS, and many modern ISPs around the world now offer FTTH service. In Bangladesh, many ISPs in Dhaka and Chittagong now use FTTH for broadband connections.</p>
+            </div>
+        </div>
+
+        <!-- 4.4 Satellite -->
+        <div class="content-card">
+            <h3>🔹 4.4 Satellite Internet</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Satellite Internet</strong> provides Internet access via communication satellites orbiting the Earth. A satellite dish at the home communicates with a satellite, which relays data to/from a ground station connected to the Internet.</p>
+            </div>
+
+            <h4>Key Characteristics</h4>
+            <ul>
+                <li><strong>Speed:</strong> Up to about <code>1 Mbps</code> with older geostationary satellites; newer LEO (Low Earth Orbit) satellites like Starlink offer much higher speeds.</li>
+                <li><strong>High latency:</strong> Geostationary satellites orbit at ~36,000 km, so the round-trip signal delay is around 600 ms — this is noticeable and makes interactive applications (gaming, video calls) less smooth.</li>
+                <li><strong>Use case:</strong> Primarily for rural and remote areas where DSL, cable, or fiber are not available.</li>
+                <li><strong>Category:</strong> Home Access (for rural areas).</li>
+            </ul>
+        </div>
+
+        <!-- 4.5 Dial-up -->
+        <div class="content-card">
+            <h3>🔹 4.5 Dial-up Access</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Dial-up</strong> uses the existing telephone line and a traditional modem to connect to the Internet. The modem converts digital data to analog signals for transmission over the phone line.</p>
+            </div>
+
+            <h4>Key Characteristics</h4>
+            <ul>
+                <li><strong>Speed:</strong> Very slow — maximum <code>56 kbps</code>.</li>
+                <li><strong>Ties up the phone line:</strong> You <em>cannot</em> make a phone call and use the Internet at the same time (unlike DSL).</li>
+                <li><strong>Legacy technology:</strong> Almost completely replaced by DSL, Cable, and FTTH.</li>
+                <li><strong>Category:</strong> Home Access (obsolete).</li>
+            </ul>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Key Difference: DSL vs. Dial-up</div>
+                <p>Both use the telephone line, but <strong>DSL can carry voice and data simultaneously</strong> (using different frequencies), while <strong>Dial-up blocks the phone line</strong> during Internet use. DSL is also 100–400x faster than Dial-up.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 5: ENTERPRISE ACCESS                                     -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-enterprise-access">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-emerald);">🏢</div>
+            <div>
+                <h2>5. Enterprise Access Technologies</h2>
+                <div class="section-sub">Ethernet &amp; WiFi — Used in companies, universities, and organizations</div>
+            </div>
+        </div>
+
+        <!-- 5.1 Ethernet -->
+        <div class="content-card">
+            <h3>🔹 5.1 Ethernet</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Ethernet</strong> is the most widely used <strong>wired LAN (Local Area Network) technology</strong>. In enterprise settings, end systems (workstations, servers) connect to an Ethernet switch using <strong>twisted-pair copper cables</strong>, and the Ethernet switch connects to the larger Internet via an edge router.</p>
+            </div>
+
+            <h4>How Does Ethernet Work in an Enterprise?</h4>
+            <p>In a typical university or company network:</p>
+            <ol>
+                <li>Each computer or device has an <strong>Ethernet port</strong> and connects via a <strong>twisted-pair copper cable (Cat 5/5e/6)</strong> to an <strong>Ethernet switch</strong>.</li>
+                <li>The Ethernet switch interconnects all devices within the local network, forwarding frames based on <strong>MAC addresses</strong>.</li>
+                <li>The Ethernet switch connects to the institution's <strong>edge router</strong>, which provides the gateway to the Internet.</li>
+            </ol>
+
+            <h4>Key Characteristics</h4>
+            <ul>
+                <li><strong>Speeds:</strong> <code>100 Mbps</code> (Fast Ethernet), <code>1 Gbps</code> (Gigabit Ethernet), <code>10 Gbps</code> (10 Gigabit Ethernet), and even <code>40/100 Gbps</code> in data centers.</li>
+                <li><strong>Dedicated connection:</strong> Each device gets a dedicated link to the switch (no sharing like cable).</li>
+                <li><strong>Low latency, high reliability:</strong> Wired connections are very stable.</li>
+                <li><strong>Category:</strong> Enterprise Access.</li>
+            </ul>
+        </div>
+
+        <!-- 5.2 WiFi -->
+        <div class="content-card">
+            <h3>🔹 5.2 WiFi (IEEE 802.11 — Wireless LAN)</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>WiFi</strong> (based on the <strong>IEEE 802.11</strong> standard) is a wireless LAN technology that allows devices to connect to a network without physical cables. A <strong>wireless access point (AP)</strong> connects to the wired Ethernet network and provides wireless connectivity to nearby devices within a range of about <strong>10–100 meters</strong>.</p>
+            </div>
+
+            <h4>How Does WiFi Work?</h4>
+            <p>In an enterprise or home WiFi setup:</p>
+            <ol>
+                <li>A <strong>wireless access point (AP)</strong> is connected to the wired network (usually an Ethernet switch or router).</li>
+                <li>Wireless devices (laptops, phones) communicate with the AP using radio waves.</li>
+                <li>The AP acts as a bridge — it receives wireless data from devices and forwards it to the wired network, and vice versa.</li>
+            </ol>
+
+            <h4>WiFi Standards</h4>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Standard</th>
+                            <th>Name</th>
+                            <th>Frequency</th>
+                            <th>Max Speed</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="tech-name">802.11b</td><td>WiFi 1</td><td>2.4 GHz</td><td>11 Mbps</td><td>1999</td></tr>
+                        <tr><td class="tech-name">802.11a</td><td>WiFi 2</td><td>5 GHz</td><td>54 Mbps</td><td>1999</td></tr>
+                        <tr><td class="tech-name">802.11g</td><td>WiFi 3</td><td>2.4 GHz</td><td>54 Mbps</td><td>2003</td></tr>
+                        <tr><td class="tech-name">802.11n</td><td>WiFi 4</td><td>2.4/5 GHz</td><td>600 Mbps</td><td>2009</td></tr>
+                        <tr><td class="tech-name">802.11ac</td><td>WiFi 5</td><td>5 GHz</td><td>6.9 Gbps</td><td>2013</td></tr>
+                        <tr><td class="tech-name">802.11ax</td><td>WiFi 6</td><td>2.4/5/6 GHz</td><td>9.6 Gbps</td><td>2020</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>Key Characteristics</h4>
+            <ul>
+                <li><strong>Wireless convenience:</strong> No cables needed for end devices.</li>
+                <li><strong>Shared medium:</strong> All devices in the same WiFi network share the wireless channel.</li>
+                <li><strong>Limited range:</strong> Typically 10–100 meters, depending on walls, interference, etc.</li>
+                <li><strong>Category:</strong> Enterprise Access (also widely used in homes, but classified as enterprise in the Kurose textbook classification because its primary design target is enterprise LANs).</li>
+            </ul>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Exam Note</div>
+                <p>WiFi (802.11) is classified as <strong>Enterprise Access</strong> in Kurose &amp; Ross textbook. However, in exams, it's acceptable to note that WiFi is <em>also used extensively in home networks</em>. The key point is that WiFi provides <em>local-area</em> wireless access (tens of meters range), unlike 3G/4G/5G which provides <em>wide-area</em> wireless access (kilometers range).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 6: WIDE-AREA WIRELESS ACCESS                             -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-wwan-access">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-amber);">📡</div>
+            <div>
+                <h2>6. Wide-Area Wireless Access Technologies</h2>
+                <div class="section-sub">3G, 4G LTE, 5G — Cellular mobile networks covering large areas</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 3G, 4G LTE &amp; 5G Cellular Networks</h3>
+
+            <div class="definition-box">
+                <div class="def-label">📌 Definition</div>
+                <p><strong>Wide-area wireless access</strong> technologies use <strong>cellular mobile networks</strong> to provide Internet access to devices (mainly smartphones) across large geographical areas — entire cities, countries, or even globally. The device communicates with a <strong>base station (cell tower)</strong> operated by a mobile network operator.</p>
+            </div>
+
+            <h4>How Does Cellular Internet Access Work?</h4>
+            <p>The basic idea is:</p>
+            <ol>
+                <li>Your mobile device communicates wirelessly with the <strong>nearest base station (cell tower)</strong> using radio signals.</li>
+                <li>The base station is connected to the mobile operator's core network via wired connections (fiber).</li>
+                <li>The mobile operator's core network connects to the Internet.</li>
+            </ol>
+            <p>The coverage area of a single base station is called a <strong>"cell"</strong> — hence the name <em>cellular</em> network. Cells overlap slightly to ensure continuous coverage as you move.</p>
+
+            <h4>Evolution of Cellular Technologies</h4>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Generation</th>
+                            <th>Technology</th>
+                            <th>Typical Speed</th>
+                            <th>Characteristics</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tech-name">3G</td>
+                            <td>UMTS, HSPA</td>
+                            <td>1–5 Mbps</td>
+                            <td>First generation with usable mobile Internet; email, basic web browsing</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">4G LTE</td>
+                            <td>LTE, LTE-Advanced</td>
+                            <td>10–50 Mbps (typical), up to 300 Mbps</td>
+                            <td>High-speed mobile broadband; HD video streaming, fast browsing, low latency</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">5G</td>
+                            <td>5G NR (New Radio)</td>
+                            <td>100 Mbps – 10+ Gbps</td>
+                            <td>Ultra-low latency (~1 ms), massive IoT connectivity, network slicing, supports autonomous vehicles &amp; AR/VR</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>Key Characteristics</h4>
+            <ul>
+                <li><strong>Wide-area coverage:</strong> A single cell can cover a radius of several kilometers. Users can move across cells (handoff/handover) without losing connection.</li>
+                <li><strong>Mobility support:</strong> Unlike Ethernet or WiFi, cellular networks are specifically designed for <em>mobile</em> users who move at high speeds (driving, train).</li>
+                <li><strong>Shared medium:</strong> The radio spectrum in a cell is shared among all users in that cell.</li>
+                <li><strong>Category:</strong> Wide-Area Wireless Access.</li>
+            </ul>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ WiFi vs. 4G/5G — Key Exam Distinction</div>
+                <p><strong>WiFi = Local-area wireless</strong> (range: ~100m, connects to a local wired LAN).<br>
+                <strong>4G/5G = Wide-area wireless</strong> (range: several km per cell, connects to mobile operator's network).<br>
+                WiFi is cheaper and faster within its range; 4G/5G provides mobility over large areas.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 7: CLASSIFICATION SUMMARY TABLE                          -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-classification">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-rose);">📋</div>
+            <div>
+                <h2>7. Complete Classification Table</h2>
+                <div class="section-sub">All access technologies classified by category — your exam cheat sheet</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Master Classification Table</h3>
+            <p>This table gives you the <strong>complete answer</strong> for questions like "List access technologies and classify them":</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Access Technology</th>
+                            <th>Category</th>
+                            <th>Medium Used</th>
+                            <th>Typical Speed</th>
+                            <th>Shared/Dedicated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="tech-name">DSL</td>
+                            <td><span class="speed-badge home">Home Access</span></td>
+                            <td>Existing telephone line (twisted pair copper)</td>
+                            <td>24 Mbps ↓ / 2.5 Mbps ↑</td>
+                            <td>Dedicated</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td class="tech-name">Cable (HFC)</td>
+                            <td><span class="speed-badge home">Home Access</span></td>
+                            <td>Coaxial cable + Fiber optic (hybrid)</td>
+                            <td>42.8 Mbps ↓ / 30.7 Mbps ↑</td>
+                            <td>Shared</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td class="tech-name">FTTH</td>
+                            <td><span class="speed-badge home">Home Access</span></td>
+                            <td>Fiber optic all the way to home</td>
+                            <td>Up to 1 Gbps+</td>
+                            <td>Dedicated/Shared (PON)</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td class="tech-name">Satellite</td>
+                            <td><span class="speed-badge home">Home Access</span></td>
+                            <td>Satellite radio link</td>
+                            <td>~1 Mbps (old); higher with LEO</td>
+                            <td>Shared</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td class="tech-name">Dial-up</td>
+                            <td><span class="speed-badge home">Home Access</span></td>
+                            <td>Telephone line (copper)</td>
+                            <td>56 kbps</td>
+                            <td>Dedicated</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td class="tech-name">Ethernet</td>
+                            <td><span class="speed-badge enterprise">Enterprise Access</span></td>
+                            <td>Twisted pair copper / Fiber (wired LAN)</td>
+                            <td>100 Mbps – 10 Gbps</td>
+                            <td>Dedicated (switched)</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td class="tech-name">WiFi (802.11)</td>
+                            <td><span class="speed-badge enterprise">Enterprise Access</span></td>
+                            <td>Radio waves (wireless LAN)</td>
+                            <td>54 Mbps – 9.6 Gbps</td>
+                            <td>Shared</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td class="tech-name">3G</td>
+                            <td><span class="speed-badge wwan">Wide-Area Wireless</span></td>
+                            <td>Cellular radio</td>
+                            <td>1–5 Mbps</td>
+                            <td>Shared</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td class="tech-name">4G LTE</td>
+                            <td><span class="speed-badge wwan">Wide-Area Wireless</span></td>
+                            <td>Cellular radio</td>
+                            <td>10–300 Mbps</td>
+                            <td>Shared</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td class="tech-name">5G</td>
+                            <td><span class="speed-badge wwan">Wide-Area Wireless</span></td>
+                            <td>Cellular radio (mmWave + sub-6GHz)</td>
+                            <td>100 Mbps – 10+ Gbps</td>
+                            <td>Shared</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Quick Memory Aid</div>
+                <p><strong>Home:</strong> DSL, Cable, FTTH, Satellite, Dial-up (things you'd find connecting a house to ISP)<br>
+                <strong>Enterprise:</strong> Ethernet, WiFi (things you'd find in an office/university LAN)<br>
+                <strong>Wide-Area Wireless:</strong> 3G, 4G LTE, 5G (cellular mobile — used anywhere, covers km)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 8: COMPARISON OF WIRELESS TECHNOLOGIES                   -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-comparison">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-purple);">⚖️</div>
+            <div>
+                <h2>8. Comparison of Wireless Access Technologies</h2>
+                <div class="section-sub">WiFi vs. 3G vs. 4G LTE vs. 5G — Asked in 2022 exam</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Detailed Comparison Table</h3>
+            <p>This comparison is important because the <strong>2022 exam (Q1.a)</strong> specifically asked: "Describe the most popular wireless Internet access technologies today. Compare and contrast them."</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>WiFi (802.11)</th>
+                            <th>3G</th>
+                            <th>4G LTE</th>
+                            <th>5G</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Coverage Area</strong></td>
+                            <td>10–100 meters (local)</td>
+                            <td>Several km per cell</td>
+                            <td>Several km per cell</td>
+                            <td>Varies: 100m (mmWave) to km (sub-6GHz)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Speed</strong></td>
+                            <td>54 Mbps – 9.6 Gbps</td>
+                            <td>1–5 Mbps</td>
+                            <td>10–300 Mbps</td>
+                            <td>100 Mbps – 10+ Gbps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Latency</strong></td>
+                            <td>Very low (~1–5 ms)</td>
+                            <td>High (~100–500 ms)</td>
+                            <td>Low (~30–50 ms)</td>
+                            <td>Ultra-low (~1 ms)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mobility Support</strong></td>
+                            <td>Limited (walking speed)</td>
+                            <td>Good (vehicular speed)</td>
+                            <td>Good (vehicular speed)</td>
+                            <td>Excellent</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost</strong></td>
+                            <td>Low (free spectrum)</td>
+                            <td>High (licensed spectrum)</td>
+                            <td>High (licensed spectrum)</td>
+                            <td>Very high (infrastructure)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Infrastructure</strong></td>
+                            <td>Access Point (AP)</td>
+                            <td>Base stations, towers</td>
+                            <td>Base stations, towers</td>
+                            <td>Small cells + base stations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Use Case</strong></td>
+                            <td>Indoor, offices, homes</td>
+                            <td>Voice, basic Internet</td>
+                            <td>Video, streaming, apps</td>
+                            <td>IoT, AR/VR, autonomous driving</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Category</strong></td>
+                            <td>Enterprise Access</td>
+                            <td>Wide-Area Wireless</td>
+                            <td>Wide-Area Wireless</td>
+                            <td>Wide-Area Wireless</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 9: PHYSICAL MEDIA                                        -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-physical-media">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-emerald);">🔗</div>
+            <div>
+                <h2>9. Physical Media Overview</h2>
+                <div class="section-sub">The actual physical links that carry bits — guided and unguided media</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Guided vs. Unguided Media</h3>
+
+            <p>The data carried between network devices travels over <strong>physical media</strong>. Physical media fall into two categories:</p>
+
+            <div class="tech-grid">
+                <div class="tech-card" style="border-color: rgba(79,143,247,0.2);">
+                    <div class="tech-card-icon">🔌</div>
+                    <h4 style="color: var(--accent-blue);">Guided Media</h4>
+                    <p>Signals are guided along a <strong>solid medium</strong> (cable/wire). The signal travels through the physical conductor.</p>
+                    <ul style="font-size:0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        <li><strong>Twisted-pair copper:</strong> Used in DSL, Ethernet (Cat5/6). Cheapest. Two insulated wires twisted together.</li>
+                        <li><strong>Coaxial cable:</strong> Used in cable TV/Internet. Two concentric copper conductors. Higher bandwidth than twisted pair.</li>
+                        <li><strong>Fiber optic:</strong> Uses light pulses. Highest speed, longest distance, immune to electromagnetic interference. Used in FTTH, network core.</li>
+                    </ul>
+                </div>
+                <div class="tech-card" style="border-color: rgba(251,191,36,0.2);">
+                    <div class="tech-card-icon">📡</div>
+                    <h4 style="color: var(--accent-amber);">Unguided Media</h4>
+                    <p>Signals propagate freely through the <strong>atmosphere or outer space</strong> as electromagnetic waves — no physical wire.</p>
+                    <ul style="font-size:0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        <li><strong>Radio waves:</strong> WiFi, Bluetooth. Short to medium range.</li>
+                        <li><strong>Microwave:</strong> Point-to-point links, satellite. Line of sight required.</li>
+                        <li><strong>Infrared:</strong> Very short range (TV remotes). Rarely used for networking.</li>
+                        <li><strong>Satellite link:</strong> Geostationary or LEO. Covers very large areas.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 10: HOW END SYSTEMS ACCESS THE EDGE ROUTER               -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-edge-router">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-amber);">🚪</div>
+            <div>
+                <h2>10. How End Systems Access the Edge Router</h2>
+                <div class="section-sub">The path from your device to the first router — Asked in 2019 exam</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Accessing the Edge Router</h3>
+
+            <p>This is an important concept (asked directly in the <strong>2019 exam</strong>). An <strong>edge router</strong> is the first router in the path from an end system to the Internet. The way an end system reaches this edge router depends on the type of access network it uses:</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Access Method</th>
+                            <th>How End System Reaches Edge Router</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tech-name">DSL</td>
+                            <td>End system → DSL modem → existing telephone line (twisted-pair copper) → DSLAM at telephone company's central office → edge router</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">Cable (HFC)</td>
+                            <td>End system → cable modem → coaxial cable → fiber node → fiber optic → CMTS at cable head end → edge router</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">FTTH</td>
+                            <td>End system → ONT (Optical Network Terminal) → fiber optic → OLT (Optical Line Terminal) at CO → edge router</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">Ethernet</td>
+                            <td>End system → twisted-pair cable → Ethernet switch → institution's edge router</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">WiFi</td>
+                            <td>End system → wireless signal → wireless access point (AP) → wired connection → edge router</td>
+                        </tr>
+                        <tr>
+                            <td class="tech-name">3G/4G/5G</td>
+                            <td>End system → radio signal → base station (cell tower) → mobile operator's core network → edge router</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="key-point">
+                <div class="kp-label">⭐ Key Point</div>
+                <p>Regardless of which access technology is used, the end system ultimately connects to the ISP's <strong>edge router</strong>. From the edge router onward, data travels through the <strong>network core</strong> (a mesh of interconnected routers) to reach its destination.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 11: KEY POINTS SUMMARY                                   -->
+    <!-- ================================================================ -->
+    <div class="section" id="sec-key-summary">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-rose);">🎯</div>
+            <div>
+                <h2>11. Key Points Summary for Exam</h2>
+                <div class="section-sub">Quick-revision bullet points — review before exam</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>🔹 Must-Remember Points</h3>
+
+            <ol>
+                <li>The Internet is a <strong>"network of networks"</strong> connecting billions of end systems (hosts) via communication links and packet switches.</li>
+                <li>End systems connect to the Internet via <strong>access networks</strong>. The first router on the path is the <strong>edge router</strong>.</li>
+                <li>Access technologies fall into three categories: <strong>Home Access</strong> (DSL, Cable, FTTH, Satellite, Dial-up), <strong>Enterprise Access</strong> (Ethernet, WiFi), and <strong>Wide-Area Wireless Access</strong> (3G, 4G LTE, 5G).</li>
+                <li><strong>DSL</strong> uses the existing phone line, provides a <em>dedicated</em> (not shared) connection, distance-sensitive (≤ 5-10 km).</li>
+                <li><strong>Cable (HFC)</strong> uses cable TV infrastructure, coax + fiber hybrid, <em>shared</em> medium (neighbors share bandwidth).</li>
+                <li><strong>FTTH</strong> is the fastest — fiber all the way to home, up to gigabit speeds.</li>
+                <li><strong>Ethernet</strong> is the dominant wired LAN technology (100 Mbps to 10 Gbps). Uses twisted-pair copper or fiber, connects to Ethernet switches.</li>
+                <li><strong>WiFi (802.11)</strong> is wireless LAN — connects devices within ~100m range to an access point.</li>
+                <li><strong>3G/4G/5G</strong> are wide-area wireless — cellular networks covering kilometers, designed for mobile users.</li>
+                <li><strong>DSL = Dedicated, Cable = Shared</strong> — this is a very common comparison point.</li>
+                <li><strong>Physical media:</strong> Guided (twisted pair, coax, fiber) vs. Unguided (radio, microwave, satellite).</li>
+                <li>WiFi is <em>local</em>-area wireless; 3G/4G/5G is <em>wide</em>-area wireless — don't confuse them.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 12: PREVIOUS YEAR QUESTIONS & ANSWERS                    -->
+    <!-- ================================================================ -->
+    <div class="section exam-section" id="sec-exam-questions">
+        <div class="section-header">
+            <div class="section-icon" style="background: var(--gradient-amber);">📝</div>
+            <div>
+                <h2>12. Previous Year Exam Questions &amp; Model Answers</h2>
+                <div class="section-sub">All questions from 2017–2023 related to Topic 1.1 with complete, exam-ready answers</div>
+            </div>
+        </div>
+
+        <!-- ===== Q1: 2023 ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2023</span>
+                <span class="exam-question-text">Q1.a) List six access technologies. Classify each one as home access, enterprise access, or wide-area wireless access.</span>
+                <span class="exam-marks">3 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p>The following table lists six access technologies and classifies each one into its appropriate category:</p>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sl.</th>
+                                    <th>Access Technology</th>
+                                    <th>Category</th>
+                                    <th>Brief Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="tech-name">DSL (Digital Subscriber Line)</td>
+                                    <td><strong>Home Access</strong></td>
+                                    <td>Uses existing telephone line to provide Internet access. Provides dedicated (not shared) connection to the central office. Typical speed: 24 Mbps downstream.</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td class="tech-name">Cable Internet (HFC)</td>
+                                    <td><strong>Home Access</strong></td>
+                                    <td>Uses cable television infrastructure (hybrid fiber-coax). Bandwidth is shared among users in a neighborhood. Typical speed: ~42.8 Mbps downstream.</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td class="tech-name">FTTH (Fiber to the Home)</td>
+                                    <td><strong>Home Access</strong></td>
+                                    <td>Fiber optic cable runs directly to the home from the CO. Offers the highest speeds among home access technologies — up to gigabits per second.</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td class="tech-name">Ethernet</td>
+                                    <td><strong>Enterprise Access</strong></td>
+                                    <td>Dominant wired LAN technology. End systems connect via twisted-pair copper cables to an Ethernet switch. Speeds: 100 Mbps to 10 Gbps.</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td class="tech-name">WiFi (IEEE 802.11)</td>
+                                    <td><strong>Enterprise Access</strong></td>
+                                    <td>Wireless LAN technology. Devices connect wirelessly to an access point within ~100 meters range. Widely used in offices, campuses, and homes.</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td class="tech-name">4G LTE</td>
+                                    <td><strong>Wide-Area Wireless Access</strong></td>
+                                    <td>Cellular mobile technology providing Internet access over kilometers via base stations. Supports mobile users at vehicular speeds. Typical speed: 10–300 Mbps.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q2: 2022 ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2022</span>
+                <span class="exam-question-text">Q1.a) Describe the most popular wireless Internet access technologies today. Compare and contrast them.</span>
+                <span class="exam-marks">2+2 = 4 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p>The most popular wireless Internet access technologies today are <strong>WiFi (IEEE 802.11)</strong> and <strong>cellular mobile networks (3G, 4G LTE, and 5G)</strong>.</p>
+
+                    <h4 style="color: var(--accent-blue); margin-top: 1.2rem;">1. WiFi (IEEE 802.11) — Wireless LAN</h4>
+                    <p>WiFi is a wireless LAN technology based on the IEEE 802.11 standard. In a WiFi-enabled network, users communicate wirelessly with a base station (called an <strong>access point or AP</strong>) within a radius of approximately <strong>10 to 100 meters</strong>. The access point is typically connected to the wired Internet via an Ethernet switch or router, and serves as the bridge between wireless devices and the wired network. WiFi operates in unlicensed spectrum (primarily 2.4 GHz and 5 GHz bands). Modern WiFi standards like 802.11ac (WiFi 5) and 802.11ax (WiFi 6) can deliver speeds exceeding <strong>several gigabits per second</strong>. WiFi is most commonly deployed in homes, offices, university campuses, cafes, and airports.</p>
+
+                    <h4 style="color: var(--accent-amber); margin-top: 1.2rem;">2. Cellular Networks — 3G, 4G LTE, 5G (Wide-Area Wireless)</h4>
+                    <p>Cellular networks provide Internet access over <strong>wide geographical areas</strong> (covering kilometers per cell). Mobile devices communicate with <strong>base stations (cell towers)</strong> managed by mobile network operators. Third-generation (3G) networks provided speeds of 1–5 Mbps. The current widely-deployed technology, <strong>4G LTE</strong>, offers speeds of <strong>10 to 300 Mbps</strong> and good latency, suitable for high-definition video streaming and fast web browsing. The emerging <strong>5G</strong> technology promises speeds exceeding <strong>10 Gbps</strong> with ultra-low latency (~1 ms), enabling applications like autonomous driving, IoT, and augmented reality. Cellular networks operate in <strong>licensed spectrum</strong> purchased by operators.</p>
+
+                    <h4 style="color: var(--accent-emerald); margin-top: 1.2rem;">Comparison</h4>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>WiFi (802.11)</th>
+                                    <th>Cellular (3G/4G LTE/5G)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Coverage Range</strong></td><td>Short range: 10–100 meters</td><td>Wide area: several kilometers per cell</td></tr>
+                                <tr><td><strong>Mobility</strong></td><td>Limited — works best for stationary or slowly moving users</td><td>Excellent — supports users moving at vehicular speeds with seamless handoff between cells</td></tr>
+                                <tr><td><strong>Speed</strong></td><td>Very high within range (WiFi 6: up to 9.6 Gbps)</td><td>Moderate to high (4G: 10–300 Mbps; 5G: up to 10+ Gbps)</td></tr>
+                                <tr><td><strong>Spectrum</strong></td><td>Unlicensed (free) bands — 2.4 GHz, 5 GHz</td><td>Licensed spectrum — operators must purchase rights</td></tr>
+                                <tr><td><strong>Cost to User</strong></td><td>Generally free or included in home/office Internet</td><td>Requires paid mobile data plan from a carrier</td></tr>
+                                <tr><td><strong>Infrastructure</strong></td><td>Low cost — a simple wireless router/AP</td><td>Expensive — requires cell towers, core network</td></tr>
+                                <tr><td><strong>Deployment</strong></td><td>Indoor: homes, offices, cafes</td><td>Outdoor and indoor: everywhere via cell towers</td></tr>
+                                <tr><td><strong>Category</strong></td><td>Enterprise / Home Access (Local-area wireless)</td><td>Wide-Area Wireless Access</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>In summary:</strong> WiFi and cellular mobile networks are complementary technologies. WiFi excels in providing high-speed, low-cost wireless access within limited areas, while cellular networks provide seamless wide-area coverage with mobility support. Modern smartphones use both — WiFi when available (for speed and cost savings), and cellular when WiFi is not in range.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q3: 2020 ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2020</span>
+                <span class="exam-question-text">Q1.a) List four access technologies. Classify each one as home access, enterprise access, or wide-area wireless access.</span>
+                <span class="exam-marks">2 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p>Four access technologies with their classification are listed below:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sl.</th>
+                                    <th>Access Technology</th>
+                                    <th>Category</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="tech-name">DSL (Digital Subscriber Line)</td>
+                                    <td><strong>Home Access</strong> — Uses existing telephone line (twisted-pair copper) to connect homes to the central office. Provides dedicated, asymmetric bandwidth.</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td class="tech-name">Cable Internet (HFC)</td>
+                                    <td><strong>Home Access</strong> — Uses cable television infrastructure with hybrid fiber-coax. Shared medium among neighborhood users.</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td class="tech-name">Ethernet</td>
+                                    <td><strong>Enterprise Access</strong> — Dominant wired LAN technology used in companies and universities. End systems connect via twisted-pair copper to Ethernet switches. Speeds: 100 Mbps – 10 Gbps.</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td class="tech-name">4G LTE / 5G</td>
+                                    <td><strong>Wide-Area Wireless Access</strong> — Cellular mobile technology providing Internet access over kilometers via base stations. Supports mobile users. Typical speed: 10 Mbps – 10+ Gbps.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q4: 2019 ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2019</span>
+                <span class="exam-question-text">Q1.b) How does an end system access the edge router? Describe your answer.</span>
+                <span class="exam-marks">3 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p>An <strong>end system (host)</strong> accesses the <strong>edge router</strong> — the first router on its path to the Internet — through an <strong>access network</strong>. The access network provides the physical link between the end system and the edge router. Different types of access networks use different technologies:</p>
+
+                    <p><strong>1. DSL (Digital Subscriber Line) — Home Access:</strong><br>
+                    The end system connects through a DSL modem, which sends data over the <strong>existing telephone line</strong> (twisted-pair copper wire) to the telephone company's <strong>central office (CO)</strong>. At the CO, a <strong>DSLAM (DSL Access Multiplexer)</strong> separates voice and data signals. The data is then forwarded to the ISP's <strong>edge router</strong>. This provides a dedicated, point-to-point connection between the home and the CO.</p>
+
+                    <p><strong>2. Cable Internet (HFC) — Home Access:</strong><br>
+                    The end system connects through a cable modem, which sends data over the <strong>coaxial cable</strong> (shared with cable TV) to a <strong>fiber node</strong> in the neighborhood. From the fiber node, the data travels over <strong>fiber optic cable</strong> to the <strong>cable head end</strong>, where a <strong>CMTS (Cable Modem Termination System)</strong> processes it and forwards it to the edge router. The coaxial cable portion is a shared medium.</p>
+
+                    <p><strong>3. FTTH (Fiber to the Home) — Home Access:</strong><br>
+                    A <strong>fiber optic cable</strong> runs directly from the CO to the home. The home has an <strong>ONT (Optical Network Terminal)</strong> that connects to the fiber. At the CO, an <strong>OLT (Optical Line Terminal)</strong> receives the signal and routes it to the edge router. This provides the highest speeds.</p>
+
+                    <p><strong>4. Ethernet — Enterprise Access:</strong><br>
+                    In a corporate or university network, end systems connect via <strong>twisted-pair copper Ethernet cables</strong> to an <strong>Ethernet switch</strong>. The Ethernet switch is then connected (often via fiber) to the institution's <strong>edge router</strong>, which provides the gateway to the Internet.</p>
+
+                    <p><strong>5. WiFi (802.11) — Enterprise/Home Access:</strong><br>
+                    Wireless end systems (laptops, phones) communicate via <strong>radio signals</strong> with a nearby <strong>wireless access point (AP)</strong>. The AP is connected to the wired network (via Ethernet) and ultimately to the <strong>edge router</strong>.</p>
+
+                    <p><strong>6. 3G/4G/5G Cellular — Wide-Area Wireless Access:</strong><br>
+                    Mobile devices communicate via <strong>radio signals</strong> to a <strong>base station (cell tower)</strong>. The base station connects to the mobile operator's <strong>core network</strong> (via fiber or microwave links), which connects to the Internet through the operator's <strong>edge router</strong>.</p>
+
+                    <p><strong>In summary:</strong> In every case, the end system uses some physical or wireless medium to reach a network device (modem, switch, or access point) that eventually connects to the ISP's edge router. The edge router is the entry point from the access network into the Internet's network core.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q5: 2017 ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2017</span>
+                <span class="exam-question-text">Q1.a) Show a journey of a message from host A to host B — (iv) Different transmission media used in computer networking, (v) Different LAN technologies used now a day, (vi) How does a host access the network infrastructure?</span>
+                <span class="exam-marks">Part of 2.75 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer (Parts iv, v, vi)</h4>
+                <div class="answer-content">
+                    <p><strong>(iv) Different transmission media used in computer networking:</strong></p>
+                    <p>Transmission media are divided into two categories:</p>
+
+                    <p><strong>A. Guided Media (Wired):</strong></p>
+                    <ul>
+                        <li><strong>Twisted-pair copper wire:</strong> The cheapest and most commonly used guided medium. Consists of two insulated copper wires twisted together. Used in telephone lines (DSL) and Ethernet LANs (Cat5/Cat6 cables). Supports speeds from 10 Mbps to 10 Gbps (depending on category and distance).</li>
+                        <li><strong>Coaxial cable:</strong> Consists of a central copper conductor surrounded by insulation and an outer conductor (shield). Used in cable television and cable Internet (HFC). Provides higher bandwidth than twisted pair.</li>
+                        <li><strong>Fiber optic cable:</strong> Uses thin glass or plastic fibers that carry data as pulses of light. Offers the highest bandwidth (up to hundreds of Gbps), longest distances, and is immune to electromagnetic interference. Used in FTTH, Internet backbone, and high-speed enterprise networks.</li>
+                    </ul>
+
+                    <p><strong>B. Unguided Media (Wireless):</strong></p>
+                    <ul>
+                        <li><strong>Radio waves:</strong> Used in WiFi (802.11) and Bluetooth. Can penetrate walls. Range varies from meters to hundreds of meters.</li>
+                        <li><strong>Microwave:</strong> Used for point-to-point links and satellite communication. Requires line of sight.</li>
+                        <li><strong>Satellite links:</strong> Used for Internet access in remote areas. Geostationary satellites have high latency (~600 ms round trip).</li>
+                    </ul>
+
+                    <p><strong>(v) Different LAN technologies used nowadays:</strong></p>
+                    <ul>
+                        <li><strong>Ethernet (IEEE 802.3):</strong> The dominant wired LAN technology. Variants include Fast Ethernet (100 Mbps), Gigabit Ethernet (1 Gbps), and 10 Gigabit Ethernet (10 Gbps). Uses twisted-pair copper or fiber optic cables, and Ethernet switches for frame forwarding.</li>
+                        <li><strong>WiFi (IEEE 802.11):</strong> The dominant wireless LAN technology. Current standards include 802.11n (WiFi 4), 802.11ac (WiFi 5), and 802.11ax (WiFi 6). Operates in 2.4 GHz and 5 GHz frequency bands.</li>
+                    </ul>
+
+                    <p><strong>(vi) How does a host access the network infrastructure?</strong></p>
+                    <p>A host (end system) accesses the network infrastructure through an <strong>access network</strong>. The access network provides the physical connection between the host and the first router (edge router) in the ISP's network. Depending on the environment:</p>
+                    <ul>
+                        <li><strong>At home:</strong> The host connects via a modem (DSL modem or cable modem) to the ISP's infrastructure using the telephone line (DSL) or cable TV line (HFC). In modern homes, FTTH uses fiber directly.</li>
+                        <li><strong>At the office/university:</strong> The host connects via an Ethernet cable to an Ethernet switch, or wirelessly via WiFi to an access point, which is connected to the institution's edge router.</li>
+                        <li><strong>On the move:</strong> The host (smartphone) connects wirelessly to a cellular base station (3G/4G/5G), which connects to the mobile operator's core network and then to the Internet.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q6: 2022 ISP Peering ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2022</span>
+                <span class="exam-question-text">Q1.c) Why will two ISPs at the same level of the hierarchy often peer with each other? How does an IXP earn money?</span>
+                <span class="exam-marks">2+1 = 3 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p><strong>Why ISPs peer with each other:</strong></p>
+                    <p>Two ISPs at the same level of the hierarchy (e.g., two Tier-2 or two regional ISPs) often <strong>peer</strong> with each other — meaning they directly connect their networks and allow traffic to flow between them <strong>without charging each other</strong> (this is called <em>settlement-free peering</em>).</p>
+                    <p>The primary reason is <strong>cost savings</strong>. If ISP A's customer wants to send data to ISP B's customer, without peering, the traffic would have to travel up through ISP A's provider (a Tier-1 ISP), across the Tier-1 backbone, and then down through ISP B's provider. Both ISP A and ISP B would have to <em>pay</em> their respective upstream providers for carrying this traffic. By peering directly, they avoid these upstream transit costs — the traffic flows directly between them without involving any paid upstream provider.</p>
+                    <p>Additionally, peering provides <strong>better performance</strong> — traffic takes a shorter, more direct path, resulting in lower latency and potentially higher throughput.</p>
+
+                    <p><strong>How an IXP earns money:</strong></p>
+                    <p>An <strong>IXP (Internet Exchange Point)</strong> is a meeting point where multiple ISPs come together to peer with each other. An IXP is typically a standalone building with its own high-speed switches. The IXP earns money by <strong>charging each ISP a fee</strong> to connect to the IXP and use its switching infrastructure. This fee is typically based on the port speed (e.g., a 10 Gbps port costs more than a 1 Gbps port) or a flat membership fee. ISPs willingly pay this fee because peering at the IXP saves them significantly more money in upstream transit costs.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Q7: 2017 Google's Network ===== -->
+        <div class="exam-card">
+            <div class="exam-card-header">
+                <span class="exam-year">2017</span>
+                <span class="exam-question-text">Q1.d) Some content providers have created their own networks. Describe Google's network. What motivates content providers to create these networks?</span>
+                <span class="exam-marks">2 Marks</span>
+            </div>
+            <div class="exam-card-body">
+                <h4>Model Answer</h4>
+                <div class="answer-content">
+                    <p><strong>Google's Private Network:</strong></p>
+                    <p>Google has built its own extensive <strong>private network</strong> to connect its data centers around the world and to deliver content as close to end users as possible. Google's network consists of:</p>
+                    <ul>
+                        <li><strong>Private fiber optic links</strong> connecting its data centers across continents (including undersea cables).</li>
+                        <li>Approximately <strong>100+ data centers</strong> spread across the globe, with smaller data centers placed close to lower-tier ISPs and IXPs.</li>
+                        <li><strong>Direct peering</strong> with lower-tier ISPs — Google peers directly with many access ISPs to deliver content (YouTube videos, search results, Gmail, etc.) without having to go through Tier-1 networks.</li>
+                    </ul>
+
+                    <p><strong>Motivation for content providers to create their own networks:</strong></p>
+                    <ol>
+                        <li><strong>Cost reduction:</strong> By building their own network and bypassing Tier-1 ISPs, content providers avoid paying expensive transit fees to upstream ISPs for carrying their enormous volumes of traffic.</li>
+                        <li><strong>Performance control:</strong> By having their own network, they have greater control over the quality, latency, and reliability of the path their content takes to reach end users. This results in faster loading times and better user experience.</li>
+                        <li><strong>Reduced dependency:</strong> They are not dependent on the infrastructure and pricing of third-party ISPs.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================= FOOTER ============================= -->
+    <div class="footer">
+        <p><strong>CSE 613 — Computer Networks</strong> • Topic 1.1: Internet Overview, Network Edge &amp; Access Technologies</p>
+        <p style="margin-top: 0.3rem;">University of Chittagong • 6th Semester Final Exam Preparation</p>
+        <p style="margin-top: 0.3rem; color: var(--text-muted);">Textbook Reference: Kurose &amp; Ross, "Computer Networking: A Top-Down Approach" — Chapter 1</p>
+    </div>
+
+</div><!-- end page-wrapper -->
+
+<!-- ============================= JAVASCRIPT ============================= -->
+<script>
+    // --- Scroll Progress Bar ---
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        document.getElementById('progressBar').style.width = scrollPercent + '%';
+
+        // Back to top button
+        const btn = document.getElementById('backToTop');
+        if (scrollTop > 400) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    // --- Smooth scroll to section ---
+    function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // --- Highlight active TOC dot ---
+    const sections = [
+        'sec-intro', 'sec-what-is-internet', 'sec-network-edge', 'sec-access-tech',
+        'sec-home-access', 'sec-enterprise-access', 'sec-wwan-access',
+        'sec-classification', 'sec-physical-media', 'sec-exam-questions'
+    ];
+
+    const dots = document.querySelectorAll('.toc-dot');
+
+    function updateActiveDot() {
+        const scrollPos = window.scrollY + 200;
+        let activeIndex = 0;
+
+        sections.forEach((id, idx) => {
+            const el = document.getElementById(id);
+            if (el && el.offsetTop <= scrollPos) {
+                activeIndex = idx;
+            }
+        });
+
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === activeIndex);
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveDot);
+    updateActiveDot();
+</script>
+
+</body>
+</html>
