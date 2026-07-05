@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE 613 — Computer Networks | Interactive Study Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0a0c14; --bg-card: #13152a; --bg-card-hover: #181b35;
+            --bg-hero: #0e1020; --bg-chapter: #111425;
+            --accent-cyan: #22d3ee; --accent-blue: #4f8ff7; --accent-purple: #a78bfa;
+            --accent-emerald: #34d399; --accent-amber: #fbbf24; --accent-rose: #fb7185;
+            --accent-orange: #fb923c; --accent-teal: #2dd4bf; --accent-indigo: #818cf8;
+            --text-primary: #e8ecf4; --text-secondary: #8b95a8; --text-muted: #5a6478; --text-heading: #f7fafc;
+            --border-card: rgba(255,255,255,0.06); --border-glow: rgba(34,211,238,0.12);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+            --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-primary); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 900px 600px at 20% 10%, rgba(34,211,238,0.04), transparent), radial-gradient(ellipse 800px 700px at 80% 50%, rgba(79,143,247,0.04), transparent), radial-gradient(ellipse 600px 500px at 50% 90%, rgba(167,139,250,0.03), transparent); pointer-events: none; z-index: 0; }
+        .wrapper { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; position: relative; z-index: 1; }
+
+        /* ========== HERO ========== */
+        .hero { text-align: center; padding: 4rem 2rem 3.5rem; margin-bottom: 3rem; background: var(--bg-hero); border: 1px solid var(--border-card); border-radius: var(--radius-xl); position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #22d3ee, #4f8ff7, #a78bfa, #fb7185, #fbbf24); }
+        .hero::after { content: ''; position: absolute; top: -80%; left: 30%; width: 40%; height: 200%; background: radial-gradient(circle, rgba(79,143,247,0.06), transparent 70%); pointer-events: none; }
+        .hero-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .hero h1 { font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #22d3ee, #4f8ff7, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; letter-spacing: -1px; position: relative; z-index: 1; }
+        .hero .course-code { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; color: var(--accent-cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.8rem; position: relative; z-index: 1; }
+        .hero p { font-size: 1rem; color: var(--text-secondary); max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-stats { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; position: relative; z-index: 1; }
+        .stat { text-align: center; }
+        .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #22d3ee, #4f8ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+        /* ========== NAV LINKS ========== */
+        .nav-row { display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.3rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 100px; color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.25s; }
+        .nav-btn:hover { background: var(--bg-card-hover); color: var(--accent-cyan); border-color: var(--border-glow); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(34,211,238,0.1); }
+        .nav-btn .nav-icon { font-size: 1rem; }
+
+        /* ========== CHAPTER SECTIONS ========== */
+        .chapter-section { margin-bottom: 2.5rem; }
+        .chapter-header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+        .ch-num { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+        .chapter-header-row h2 { font-size: 1.25rem; font-weight: 800; color: var(--text-heading); }
+        .chapter-header-row .ch-sub { font-size: 0.78rem; color: var(--text-muted); font-weight: 400; }
+
+        /* Topic Grid */
+        .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .topic-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 1.3rem 1.5rem; text-decoration: none; color: var(--text-primary); transition: all 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .topic-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-accent, var(--accent-blue)); opacity: 0; transition: opacity 0.3s; }
+        .topic-card:hover { background: var(--bg-card-hover); border-color: rgba(255,255,255,0.1); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .topic-card:hover::before { opacity: 1; }
+        .topic-card .topic-num { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .topic-card .topic-title { font-size: 0.95rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.4rem; line-height: 1.4; flex-grow: 1; }
+        .topic-card .topic-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+        .topic-card .topic-status { display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; width: fit-content; }
+        .status-ready { background: rgba(52,211,153,0.1); color: var(--accent-emerald); border: 1px solid rgba(52,211,153,0.2); }
+        .status-coming { background: rgba(107,122,144,0.1); color: var(--text-muted); border: 1px solid rgba(107,122,144,0.15); }
+
+        /* Non-link cards */
+        .topic-card.disabled { cursor: default; }
+        .topic-card.disabled:hover { transform: none; box-shadow: none; background: var(--bg-card); border-color: var(--border-card); }
+
+        .footer { text-align: center; padding: 2rem 1rem; margin-top: 2rem; border-top: 1px solid var(--border-card); font-size: 0.78rem; color: var(--text-muted); }
+        .footer a { color: var(--accent-cyan); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.6rem; }
+            .hero { padding: 2.5rem 1.2rem 2.5rem; }
+            .hero-stats { gap: 1.2rem; }
+            .topic-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <!-- HERO -->
+    <div class="hero">
+        <span class="hero-emoji">🌐</span>
+        <div class="course-code">CSE 613 • 6th Semester</div>
+        <h1>Computer Networks<br>Interactive Study Notes</h1>
+        <p>Complete, exam-ready preparation books for every topic — with intuitive explanations, animated diagrams, formulas, numerical examples, and all previous year questions with model answers.</p>
+        <div class="hero-stats">
+            <div class="stat"><div class="stat-num">56</div><div class="stat-label">Total Topics</div></div>
+            <div class="stat"><div class="stat-num">7</div><div class="stat-label">Chapters</div></div>
+            <div class="stat"><div class="stat-num">7</div><div class="stat-label">Years of Exams</div></div>
+            <div class="stat"><div class="stat-num" id="readyCount">3</div><div class="stat-label">Books Ready</div></div>
+        </div>
+    </div>
+
+    <!-- QUICK NAV -->
+    <div class="nav-row">
+        <a href="CSE613_Topic_List.html" class="nav-btn"><span class="nav-icon">📋</span> Full Topic List</a>
+        <a href="#ch1" class="nav-btn"><span class="nav-icon">1️⃣</span> Chapter 1</a>
+        <a href="#ch2" class="nav-btn"><span class="nav-icon">2️⃣</span> Chapter 2</a>
+        <a href="#ch3" class="nav-btn"><span class="nav-icon">3️⃣</span> Chapter 3</a>
+        <a href="#ch4" class="nav-btn"><span class="nav-icon">4️⃣</span> Chapter 4</a>
+        <a href="#ch5" class="nav-btn"><span class="nav-icon">5️⃣</span> Chapter 5</a>
+        <a href="#ch6" class="nav-btn"><span class="nav-icon">6️⃣</span> Chapter 6</a>
+        <a href="#chB" class="nav-btn"><span class="nav-icon">➕</span> Bonus</a>
+    </div>
+
+    <!-- ==================== CHAPTER 1 ==================== -->
+    <div class="chapter-section" id="ch1">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #22d3ee, #4f8ff7);">1</div>
+            <div><h2>Computer Networks &amp; the Internet</h2><div class="ch-sub">8 Topics • Syllabus: 3 Hours</div></div>
+        </div>
+        <div class="topic-grid">
+            <a href="Topic_1_1_Internet_Overview_Access_Technologies.html" class="topic-card" style="--card-accent: #22d3ee;">
+                <div class="topic-num">Topic 1.1</div>
+                <div class="topic-title">Internet Overview, Network Edge &amp; Access Technologies</div>
+                <div class="topic-desc">DSL, Cable, FTTH, Ethernet, WiFi, 3G/4G/5G — access classification</div>
+                <div class="topic-status status-ready">✓ Ready</div>
+            </a>
+            <a href="Topic_1_2_Circuit_vs_Packet_Switching.html" class="topic-card" style="--card-accent: #fb923c;">
+                <div class="topic-num">Topic 1.2</div>
+                <div class="topic-title">Circuit Switching vs. Packet Switching</div>
+                <div class="topic-desc">FDM, TDM, store-and-forward, cut-through, advantages/disadvantages</div>
+                <div class="topic-status status-ready">✓ Ready</div>
+            </a>
+            <a href="Topic_1_3_Delay_Loss_Throughput.html" class="topic-card" style="--card-accent: #a78bfa;">
+                <div class="topic-num">Topic 1.3</div>
+                <div class="topic-title">Delay, Loss &amp; Throughput in Packet-Switched Networks</div>
+                <div class="topic-desc">Processing, queuing, transmission, propagation delays; throughput &amp; bottleneck</div>
+                <div class="topic-status status-ready">✓ Ready</div>
+            </a>
+            <div class="topic-card disabled">
+                <div class="topic-num">Topic 1.4</div>
+                <div class="topic-title">Protocol Layers — OSI Model &amp; TCP/IP Model</div>
+                <div class="topic-desc">7-layer OSI vs. 5-layer Internet stack; responsibilities; encapsulation</div>
+                <div class="topic-status status-coming">◻ Coming Soon</div>
+            </div>
+            <div class="topic-card disabled">
+                <div class="topic-num">Topic 1.5</div>
+                <div class="topic-title">Network Architecture vs. Application Architecture</div>
+                <div class="topic-desc">Fixed layered network architecture vs. application design</div>
+                <div class="topic-status status-coming">◻ Coming Soon</div>
+            </div>
+            <div class="topic-card disabled">
+                <div class="topic-num">Topic 1.6</div>
+                <div class="topic-title">Internet Service Model — Best-Effort, Connection-Oriented</div>
+                <div class="topic-desc">TCP reliable transport; datagram service; Internet guarantees</div>
+                <div class="topic-status status-coming">◻ Coming Soon</div>
+            </div>
+            <div class="topic-card disabled">
+                <div class="topic-num">Topic 1.7</div>
+                <div class="topic-title">ISP Hierarchy, Peering &amp; IXPs</div>
+                <div class="topic-desc">Tier-1/2 ISPs, peering, IXPs, content provider networks</div>
+                <div class="topic-status status-coming">◻ Coming Soon</div>
+            </div>
+            <div class="topic-card disabled">
+                <div class="topic-num">Topic 1.8</div>
+                <div class="topic-title">Transmission Media &amp; Physical Layer Basics</div>
+                <div class="topic-desc">Twisted pair, coax, fiber, radio, satellite, electromagnetic spectrum</div>
+                <div class="topic-status status-coming">◻ Coming Soon</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAPTER 2 ==================== -->
+    <div class="chapter-section" id="ch2">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #34d399, #22d3ee);">2</div>
+            <div><h2>Application Layer</h2><div class="ch-sub">10 Topics • Syllabus: 8 Hours</div></div>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.1</div><div class="topic-title">HTTP Protocol — Persistent, Non-Persistent, Pipelining &amp; HTTP/2</div><div class="topic-desc">HTTP messages, headers, connection types, HOL blocking</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.2</div><div class="topic-title">Web Caching (Proxy Servers)</div><div class="topic-desc">Proxy reduces delay; conditional GET; cache hit vs. miss</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.3</div><div class="topic-title">Cookies &amp; State Management</div><div class="topic-desc">Cookie components, user tracking, e-commerce records</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.4</div><div class="topic-title">FTP — File Transfer Protocol</div><div class="topic-desc">Separate control &amp; data connections, "out-of-band" control</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.5</div><div class="topic-title">Electronic Mail — SMTP, POP3, IMAP</div><div class="topic-desc">Mail architecture, SMTP push, POP3 modes, message journey</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.6</div><div class="topic-title">DNS — Domain Name System</div><div class="topic-desc">Hierarchical resolution, iterative vs. recursive, DNS records</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.7</div><div class="topic-title">Peer-to-Peer (P2P) &amp; BitTorrent</div><div class="topic-desc">P2P vs. client-server, chunk exchange, tit-for-tat</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.8</div><div class="topic-title">Client-Server vs. P2P Architecture</div><div class="topic-desc">Comparison, scalability, examples</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.9</div><div class="topic-title">Application Requirements — Loss, Bandwidth, Latency</div><div class="topic-desc">Loss-tolerant, bandwidth-sensitive, elastic, real-time apps</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 2.10</div><div class="topic-title">HTTP Message Analysis (Wireshark)</div><div class="topic-desc">Interpreting raw HTTP request/response captures</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAPTER 3 ==================== -->
+    <div class="chapter-section" id="ch3">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #fbbf24, #fb923c);">3</div>
+            <div><h2>Transport Layer</h2><div class="ch-sub">11 Topics • Syllabus: 9 Hours</div></div>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.1</div><div class="topic-title">Multiplexing &amp; Demultiplexing (Ports &amp; Sockets)</div><div class="topic-desc">UDP 2-tuple, TCP 4-tuple socket identification</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.2</div><div class="topic-title">UDP — User Datagram Protocol</div><div class="topic-desc">UDP segment, checksum, connectionless service</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.3</div><div class="topic-title">TCP vs. UDP — Comparison</div><div class="topic-desc">Connection-oriented vs. connectionless, reliability, overhead</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.4</div><div class="topic-title">Reliable Data Transfer — rdt Protocols &amp; FSMs</div><div class="topic-desc">rdt 1.0-3.0, FSMs, ACK/NAK, sequence numbers, timers</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.5</div><div class="topic-title">Go-Back-N (GBN) Protocol</div><div class="topic-desc">Sliding window, cumulative ACKs, timer mechanism</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.6</div><div class="topic-title">Selective Repeat (SR) Protocol</div><div class="topic-desc">Individual ACKs, per-packet timers, receiver buffering</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.7</div><div class="topic-title">TCP — Segment Structure, Seq Numbers &amp; ACKs</div><div class="topic-desc">TCP header, seq/ack numbers, piggybacking, MSS</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.8</div><div class="topic-title">TCP RTT Estimation &amp; Timeout</div><div class="topic-desc">SampleRTT, EWMA, DevRTT, TimeoutInterval</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.9</div><div class="topic-title">TCP Flow Control</div><div class="topic-desc">Receive window (rwnd), buffer overflow prevention</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.10</div><div class="topic-title">TCP Congestion Control — Slow Start, AIMD</div><div class="topic-desc">Slow start, congestion avoidance, fast recovery, TCP Reno</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 3.11</div><div class="topic-title">Congestion Control Principles</div><div class="topic-desc">End-to-end vs. network-assisted, flow vs. congestion control</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAPTER 4 ==================== -->
+    <div class="chapter-section" id="ch4">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #fb7185, #a78bfa);">4</div>
+            <div><h2>Network Layer — Data Plane &amp; Control Plane</h2><div class="ch-sub">13 Topics • Syllabus: 9 Hours</div></div>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.1</div><div class="topic-title">Forwarding vs. Routing — Data &amp; Control Plane</div><div class="topic-desc">Forwarding tables, longest prefix, per-router vs. SDN control</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.2</div><div class="topic-title">Router Architecture — Input/Output Ports, Switching</div><div class="topic-desc">HOL blocking, packet scheduling (FIFO, Priority, RR, WFQ)</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.3</div><div class="topic-title">IPv4 — Datagram Format &amp; Fragmentation</div><div class="topic-desc">IPv4 header, TTL, fragmentation, best-effort model</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.4</div><div class="topic-title">IP Addressing &amp; Subnetting</div><div class="topic-desc">CIDR, subnet masks, subnet design, prefix matching</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.5</div><div class="topic-title">DHCP — Dynamic Host Configuration</div><div class="topic-desc">DHCP Discover → Offer → Request → ACK</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.6</div><div class="topic-title">NAT — Network Address Translation</div><div class="topic-desc">NAT operation, translation table, UPnP, arguments for/against</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.7</div><div class="topic-title">IPv6 — Motivation &amp; Transition from IPv4</div><div class="topic-desc">IPv6 header, comparison, tunneling, address space</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.8</div><div class="topic-title">ICMP — Internet Control Message Protocol</div><div class="topic-desc">ICMP message types, Traceroute, Ping, BOOTP, RARP</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.9</div><div class="topic-title">Routing — Link State (Dijkstra's Algorithm)</div><div class="topic-desc">Step-by-step Dijkstra's, shortest path numerical problems</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.10</div><div class="topic-title">Routing — Distance Vector (Bellman-Ford)</div><div class="topic-desc">DV algorithm, count-to-infinity, poisoned reverse</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.11</div><div class="topic-title">Intra-AS Routing — OSPF &amp; RIP</div><div class="topic-desc">OSPF areas, link-state ads, RIP, comparison</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.12</div><div class="topic-title">Inter-AS Routing — BGP &amp; Route Aggregation</div><div class="topic-desc">BGP path attributes, eBGP/iBGP, route selection</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 4.13</div><div class="topic-title">SDN &amp; OpenFlow — Generalized Forwarding</div><div class="topic-desc">SDN architecture, OpenFlow match+action, flow tables</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAPTER 5 ==================== -->
+    <div class="chapter-section" id="ch5">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #818cf8, #c084fc);">5</div>
+            <div><h2>Link Layer &amp; Local Area Networks</h2><div class="ch-sub">7 Topics • Syllabus: 7 Hours</div></div>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.1</div><div class="topic-title">Link Layer Services &amp; Error Detection/Correction</div><div class="topic-desc">Parity, 2D parity, Internet checksum, CRC</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.2</div><div class="topic-title">Multiple Access Protocols</div><div class="topic-desc">ALOHA, CSMA/CD, CSMA/CA, TDMA, token passing</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.3</div><div class="topic-title">MAC Addressing &amp; ARP</div><div class="topic-desc">48-bit MAC, ARP protocol, broadcast vs. unicast</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.4</div><div class="topic-title">Ethernet — Frame Structure &amp; Standards</div><div class="topic-desc">Ethernet frame, CSMA/CD, 10/100/1000 BASE-T</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.5</div><div class="topic-title">Switches, VLANs &amp; Spanning Tree</div><div class="topic-desc">Self-learning, switch tables, VLANs, trunking</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.6</div><div class="topic-title">CRC — Cyclic Redundancy Check</div><div class="topic-desc">Generator polynomial, computing remainder R</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 5.7</div><div class="topic-title">Day in the Life of a Web Page Request</div><div class="topic-desc">Complete walkthrough: DHCP → ARP → DNS → TCP → HTTP</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAPTER 6 ==================== -->
+    <div class="chapter-section" id="ch6">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #f472b6, #fb923c);">6</div>
+            <div><h2>Wireless Networks, Mobility &amp; Security</h2><div class="ch-sub">5 Topics • Syllabus: 2 Hours</div></div>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card disabled"><div class="topic-num">Topic 6.1</div><div class="topic-title">Wireless Networks — 802.11 (WiFi) &amp; Bluetooth</div><div class="topic-desc">BSS, AP, wireless channels, Bluetooth, CDMA</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 6.2</div><div class="topic-title">Mobility — Mobile IP, Indirect &amp; Direct Routing</div><div class="topic-desc">Home/foreign agent, care-of address, triangle routing</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 6.3</div><div class="topic-title">Mobile IP vs. GSM Mobility</div><div class="topic-desc">Handoff, registration, routing differences</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 6.4</div><div class="topic-title">Network Security Fundamentals</div><div class="topic-desc">Confidentiality, integrity, MITM attacks, Trudy scenario</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic 6.5</div><div class="topic-title">RSA Encryption &amp; Decryption</div><div class="topic-desc">RSA key generation, encryption/decryption of text</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== BONUS ==================== -->
+    <div class="chapter-section" id="chB">
+        <div class="chapter-header-row">
+            <div class="ch-num" style="background: linear-gradient(135deg, #6366f1, #a855f7);">+</div>
+            <div><h2>Bonus — Network Management</h2><div class="ch-sub">2 Topics • Not in main syllabus but appeared in exams</div></div>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card disabled"><div class="topic-num">Topic B.1</div><div class="topic-title">SNMP — Simple Network Management Protocol</div><div class="topic-desc">Managing server, MIB, GetRequest, SetRequest, Trap</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+            <div class="topic-card disabled"><div class="topic-num">Topic B.2</div><div class="topic-title">IGMP — Internet Group Management Protocol</div><div class="topic-desc">Multicast group management, use cases</div><div class="topic-status status-coming">◻ Coming Soon</div></div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p><strong>CSE 613 — Computer Networks</strong> • University of Chittagong • 6th Semester</p>
+        <p style="margin-top: 0.3rem;">Textbook: Kurose &amp; Ross, "Computer Networking: A Top-Down Approach"</p>
+        <p style="margin-top: 0.5rem;">Built with ❤️ for exam preparation • <a href="https://github.com/marajulcsecu/Computer-Network-Interactive-Notes" target="_blank">View on GitHub</a></p>
+    </div>
+
+</div>
+
+</body>
+</html>
